@@ -1,5 +1,12 @@
+/*
+ /* 
+ * Libreria para la representacion de objetos volumetricos usando el modelo EVM
+ * Autor: Harold N. Montenegro H.
+ */
 
-/***********Inicializar WebGL en canvas******************/  
+/******************Inicializacion de libreria WebGL****************************/
+
+/**Inicializar WebGL en canvas**/  
 var gl;
 function initGL(canvas) {
     try {
@@ -49,7 +56,7 @@ function getShader(gl, id) {
 }
 
 
-/***********Inicializar Shaders que apuntan a los ID del HTML******************/
+/**Inicializar Shaders que apuntan a los ID del HTML**/
 var shaderProgram;
 function initShaders() {
     var fragmentShader = getShader(gl, "shader-fs");
@@ -73,8 +80,8 @@ function initShaders() {
     shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 }
 
-/***********Actualiza las matrices uniforme de modelo-vista y proyeccion
- *          que estan en la GPU con la que se tiene en Javascript************/
+/**Actualiza las matrices uniforme de modelo-vista y proyeccion
+ *          que estan en la GPU con la que se tiene en Javascript**/
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 function setMatrixUniforms() {
@@ -83,7 +90,7 @@ function setMatrixUniforms() {
 }
 
 
-/*********Inicializar los buffer a usar con sus respectivos vertices***********/
+/**Inicializar los buffer a usar con sus respectivos vertices**/
 var triangleVertexPositionBuffer;
 var squareVertexPositionBuffer;
 function initBuffers() {
@@ -111,8 +118,8 @@ function initBuffers() {
     squareVertexPositionBuffer.numItems = 4;
 }
 
-/******************Se encarga de realizar el renderizado de la escena 
- *                 en el lienzo********************/
+/**Se encarga de realizar el renderizado de la escena 
+ *                 en el lienzo**/
 function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -136,9 +143,24 @@ function drawScene() {
 }
 
 
-/*****************Iniciar WebGL apuntando al canvas del HTML******************/  
+/**Iniciar WebGL apuntando al canvas del HTML**/  
 function webGLStart() {
     var canvas = document.getElementById("leccion1-canvas");
+    
+    var puntoB = new point3D(1,2,3);
+    
+   
+    console.log("ESTE ES Y DE PUNTO B --> " + puntoB.Y);
+    
+    console.log("ESTE ES Y DE PUNTO B --> " + puntoB.Y);
+    puntoB.translate(1,1,1);
+    
+    
+    
+    
+    
+    
+    
     initGL(canvas);
     initShaders();
     initBuffers();
@@ -148,5 +170,7 @@ function webGLStart() {
 
     drawScene();
 }
+
+/******************************************************************************/
 
 
