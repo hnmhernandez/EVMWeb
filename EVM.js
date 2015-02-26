@@ -1,5 +1,5 @@
 
-/***********Inicializar WebGL en canvas******************/
+/***********Inicializar WebGL en canvas******************/  
 var gl;
 function initGL(canvas) {
     try {
