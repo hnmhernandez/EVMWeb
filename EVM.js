@@ -6,7 +6,7 @@
 
 /******************Inicializacion de libreria WebGL****************************/
 
-/**Inicializar WebGL en canvas**/  
+/**Inicializar WebGL en canvas**/
 var gl;
 function initGL(canvas) {
     try {
@@ -142,25 +142,47 @@ function drawScene() {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 }
 
+/**FUNCION SOLO DE PRUEBAS**/
+function pruebas() {
 
-/**Iniciar WebGL apuntando al canvas del HTML**/  
+    var puntoA = new Point3D(1, 2, 3);
+    var puntoB = new Point3D(6, 5, 4);
+
+    var line = new Line3D(puntoA, puntoB);
+    console.log(line.P1);
+    console.log(line.P2);
+
+    var line2 = new Line3Dcopy(line);
+    console.log("/**Prueba de Line3Dcopy**/");
+    console.log(line2.P1);
+    console.log(line2.P2);
+
+
+    var vector = new Vector3D(7, 8, 9);
+    console.log("/**vector = Prueba de Vector3D 7,8,9**/");
+    console.log(vector.P3D);
+
+    var vector2 = new Vector3Dorigin(puntoA);
+    console.log("/**vector2 = Prueba de Vector3Dorigin pasandole puntoA(1,2,3)**/");
+    console.log(vector2.P3D);
+
+    var vector3 = new Vector3Dhead(puntoA, puntoB);
+    console.log("/**Prueba de Vector3Dhead pasandole puntoA y puntoB**/");
+    console.log(vector3.P3D);
+
+    console.log("/**Prueba de suma de vectores --> vector + vector2**/");
+    vector.suma(vector2);
+    console.log(vector.P3D);
+
+}
+
+
+/**Iniciar WebGL apuntando al canvas del HTML**/
 function webGLStart() {
     var canvas = document.getElementById("leccion1-canvas");
-    
-    var puntoB = new point3D(1,2,3);
-    
-   
-    console.log("ESTE ES Y DE PUNTO B --> " + puntoB.Y);
-    
-    console.log("ESTE ES Y DE PUNTO B --> " + puntoB.Y);
-    puntoB.translate(1,1,1);
-    
-    
-    
-    
-    
-    
-    
+
+    pruebas();
+
     initGL(canvas);
     initShaders();
     initBuffers();
