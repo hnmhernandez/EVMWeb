@@ -149,6 +149,7 @@ function pruebas() {
     var puntoB = new Point3D(6, 5, 4);
 
     var line = new Line3D(puntoA, puntoB);
+    console.log("/**Imprimiendo line(PuntoA, PuntoB)**/");
     console.log(line.P1);
     console.log(line.P2);
 
@@ -161,18 +162,39 @@ function pruebas() {
     var vector = new Vector3D(7, 8, 9);
     console.log("/**vector = Prueba de Vector3D 7,8,9**/");
     console.log(vector.P3D);
+    
+    var vectorB = new Vector3D(1, 2, 3);
+    console.log("/**vectorB = Prueba de Vector3D 1,2,3**/");
+    console.log(vectorB.P3D);
 
-    var vector2 = new Vector3Dorigin(puntoA);
+    var vectorOrigin = new Vector3Dorigin(puntoA);
     console.log("/**vector2 = Prueba de Vector3Dorigin pasandole puntoA(1,2,3)**/");
-    console.log(vector2.P3D);
+    console.log(vectorOrigin.P3D);
 
-    var vector3 = new Vector3Dhead(puntoA, puntoB);
+    var vectorOrigin = new Vector3Dhead(puntoA, puntoB);
     console.log("/**Prueba de Vector3Dhead pasandole puntoA y puntoB**/");
-    console.log(vector3.P3D);
+    console.log(vectorOrigin.P3D);
 
-    console.log("/**Prueba de suma de vectores --> vector + vector2**/");
-    vector.suma(vector2);
-    console.log(vector.P3D);
+    console.log("/**Prueba de suma de vectores --> vector + vectorB --> (7,8,9) * (1,2,3)**/");
+    var vectorSuma = vector.suma(vectorB);
+    console.log(vectorSuma);
+    
+    console.log("/**Prueba de producto punto de vectores --> vector * vectorB --> (7,8,9) * (1,2,3)**/");
+    console.log(vector.prodPunto(vectorB));
+    
+    var normaVector = vector.norma(vector);
+    console.log("/**Norma del vector --> sqrt(7*7 + 8*8 + 9*9)**/");
+    console.log(normaVector);
+    
+    var vectorCruz = vector.prodCruz(vectorB);
+    console.log("/**Prueba de producto cruz de vectores --> vector x vectorB --> (7,8,9) x (1,2,3)**/");
+    vector.prodCruz(vectorB);
+    console.log(vectorCruz);
+    
+   var vectorNormalizado = new Vector3D(7, 8, 9);
+    vectorNormalizado.normalizar();
+    console.log("/**Prueba normalizar vectores --> vector(7,8,9) **/");
+    console.log(vectorNormalizado.P3D);
 
 }
 
