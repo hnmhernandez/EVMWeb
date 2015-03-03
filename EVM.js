@@ -147,6 +147,8 @@ function pruebas() {
 
     var puntoA = new Point3D(1, 2, 3);
     var puntoB = new Point3D(6, 5, 4);
+    var puntoC = new Point3D(5, 2, 1);
+    var puntoD = new Point3D(3, 1, 6);
 
     var line = new Line3D(puntoA, puntoB);
     console.log("/**Imprimiendo line(PuntoA, PuntoB)**/");
@@ -182,7 +184,7 @@ function pruebas() {
     console.log("/**Prueba de producto punto de vectores --> vector * vectorB --> (7,8,9) * (1,2,3)**/");
     console.log(vector.prodPunto(vectorB));
     
-    var normaVector = vector.norma(vector);
+    var normaVector = vector.norma();
     console.log("/**Norma del vector --> sqrt(7*7 + 8*8 + 9*9)**/");
     console.log(normaVector);
     
@@ -195,7 +197,26 @@ function pruebas() {
     vectorNormalizado.normalizar();
     console.log("/**Prueba normalizar vectores --> vector(7,8,9) **/");
     console.log(vectorNormalizado.P3D);
-
+    
+    console.log("/**Prueba de Line3D **/");
+    var line1 = new Line3D(puntoA, puntoB);
+    console.log(line1.P1);
+    console.log(line1.P2);
+    
+    console.log("/**Prueba copia de Line3D **/");
+    var line2 = Line3Dcopy(line1);
+    console.log(line2.P1);
+    console.log(line2.P2); 
+    
+    if(line1.igual(line2)){
+        console.log("son iguales");
+    }else{
+        console.log("son distintos");
+    }
+    
+    var line1 = new Line3D(puntoC, puntoD);
+    console.log("/**Prueba de interseccion entre lineas **/");
+    console.log(line1.puntoInterseccion(line2, false));
 }
 
 
