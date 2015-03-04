@@ -145,10 +145,10 @@ function drawScene() {
 /**FUNCION SOLO DE PRUEBAS**/
 function pruebas() {
 
-    var puntoA = new Point3D(1, 2, 3);
-    var puntoB = new Point3D(6, 5, 4);
-    var puntoC = new Point3D(5, 2, 1);
-    var puntoD = new Point3D(3, 1, 6);
+    var puntoA = new Point3D(4, 3, 5);
+    var puntoB = new Point3D(1, 5, 7);
+    var puntoC = new Point3D(1, -8, 4);
+    var puntoD = new Point3D(3, 5, 2);
 
     var line = new Line3D(puntoA, puntoB);
     console.log("/**Imprimiendo line(PuntoA, PuntoB)**/");
@@ -164,7 +164,7 @@ function pruebas() {
     var vector = new Vector3D(7, 8, 9);
     console.log("/**vector = Prueba de Vector3D 7,8,9**/");
     console.log(vector.P3D);
-    
+
     var vectorB = new Vector3D(1, 2, 3);
     console.log("/**vectorB = Prueba de Vector3D 1,2,3**/");
     console.log(vectorB.P3D);
@@ -179,44 +179,61 @@ function pruebas() {
 
     console.log("/**Prueba de suma de vectores --> vector + vectorB --> (7,8,9) * (1,2,3)**/");
     var vectorSuma = vector.suma(vectorB);
-    console.log(vectorSuma);
-    
+    console.log(vectorSuma.P3D);
+
     console.log("/**Prueba de producto punto de vectores --> vector * vectorB --> (7,8,9) * (1,2,3)**/");
     console.log(vector.prodPunto(vectorB));
-    
+
     var normaVector = vector.norma();
     console.log("/**Norma del vector --> sqrt(7*7 + 8*8 + 9*9)**/");
     console.log(normaVector);
-    
+
     var vectorCruz = vector.prodCruz(vectorB);
     console.log("/**Prueba de producto cruz de vectores --> vector x vectorB --> (7,8,9) x (1,2,3)**/");
     vector.prodCruz(vectorB);
-    console.log(vectorCruz);
-    
-   var vectorNormalizado = new Vector3D(7, 8, 9);
+    console.log(vectorCruz.P3D);
+
+    var vectorNormalizado = new Vector3D(7, 8, 9);
     vectorNormalizado.normalizar();
     console.log("/**Prueba normalizar vectores --> vector(7,8,9) **/");
     console.log(vectorNormalizado.P3D);
-    
+
     console.log("/**Prueba de Line3D **/");
     var line1 = new Line3D(puntoA, puntoB);
     console.log(line1.P1);
     console.log(line1.P2);
-    
+
     console.log("/**Prueba copia de Line3D **/");
     var line2 = Line3Dcopy(line1);
     console.log(line2.P1);
-    console.log(line2.P2); 
-    
-    if(line1.igual(line2)){
-        console.log("son iguales");
-    }else{
-        console.log("son distintos");
+    console.log(line2.P2);
+
+    if (line1.igual(line2)) {
+        console.log("L1 es igual a L2");
+    } else {
+        console.log("L1 es distinto a L2");
     }
-    
+
     var line1 = new Line3D(puntoC, puntoD);
     console.log("/**Prueba de interseccion entre lineas **/");
-    console.log(line1.puntoInterseccion(line2, false));
+    console.log(line1.puntoInterseccion(line2));
+
+
+    console.log("/**Prueba sobre planos3D **/");
+    var plano1 = new Plane();
+    var plano2 = new PlaneWithPoints3D(puntoA, puntoB, puntoC);
+    var plano3 = new PlaneCopy(plano2);
+
+
+    console.log("/**Sacando el vector normal de un plano --> plano2(puntoA, puntoB, puntoC) **/");
+    console.log(plano2.normal().P3D);
+
+    console.log("/**Comprobando si el punto esta en el plano **/");
+    if (plano2.puntoEnPlano(puntoB)) {
+        console.log("puntoB si esta en el plano");
+    } else {
+        console.log("puntoB no esta en el plano");
+    }
 }
 
 

@@ -11,22 +11,24 @@ function Vector3D(x, y, z) {
 }
 
 function Vector3Dorigin(P) {     //Cola = Origen(0,0,0); Cabeza = P(X,Y,Z)
-    this.P3D = new Point3D(P.X, P.Y, P.Z);
+    var vector = new Vector3D(P.X, P.Y, P.Z);
+    return vector;
+//    this.P3D = new Point3D(P.X, P.Y, P.Z);
 }
 
 function Vector3Dhead(A, B) {    //Cola = A(X,Y,Z); Cabeza = B(X,Y,Z)
-    var vectorResultante = new Point3D(B.X - A.X, B.Y - A.Y, B.Z - A.Z);
+    var vectorResultante = new Vector3D(B.X - A.X, B.Y - A.Y, B.Z - A.Z);
     return vectorResultante;
 }
 
 //metodos
 Vector3D.prototype.suma = function (u) {
-    var vectorResultante = new Point3D(this.P3D.X + u.P3D.X, this.P3D.Y + u.P3D.Y, this.P3D.Z + u.P3D.Z);
+    var vectorResultante = new Vector3D(this.P3D.X + u.P3D.X, this.P3D.Y + u.P3D.Y, this.P3D.Z + u.P3D.Z);
     return vectorResultante;
 };
 
 Vector3D.prototype.resta = function (u) {
-    var vectorResultante = new Point3D(this.P3D.X - u.P3D.X, this.P3D.Y - u.P3D.Y, this.P3D.Z - u.P3D.Z);
+    var vectorResultante = new Vector3D(this.P3D.X - u.P3D.X, this.P3D.Y - u.P3D.Y, this.P3D.Z - u.P3D.Z);
     return vectorResultante;
 };
 
@@ -35,7 +37,7 @@ Vector3D.prototype.prodPunto = function (u) {
 };
 
 Vector3D.prototype.prodCruz = function (u) {
-    var vectorResultante = new Point3D(this.P3D.Y * u.P3D.Z - this.P3D.Z * u.P3D.Y,
+    var vectorResultante = new Vector3D(this.P3D.Y * u.P3D.Z - this.P3D.Z * u.P3D.Y,
             this.P3D.Z * u.P3D.X - this.P3D.X * u.P3D.Z,
             this.P3D.X * u.P3D.Y - this.P3D.Y * u.P3D.X);
 

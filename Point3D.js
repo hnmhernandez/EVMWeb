@@ -6,12 +6,6 @@
 var X, Y, Z;
 
 //Constructor
-function Point3Dnull(){
-    this.X = 0.0;
-    this.Y = 0.0;
-    this.Z = 0.0;
-}
-
 function Point3D(x, y, z) {
     this.X = x;
     this.Y = y;
