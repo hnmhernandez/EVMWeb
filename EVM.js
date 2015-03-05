@@ -173,9 +173,9 @@ function pruebas() {
     console.log("/**vector2 = Prueba de Vector3Dorigin pasandole puntoA(1,2,3)**/");
     console.log(vectorOrigin.P3D);
 
-    var vectorOrigin = new Vector3Dhead(puntoA, puntoB);
+    var vectorHead = new Vector3Dhead(puntoA, puntoB);
     console.log("/**Prueba de Vector3Dhead pasandole puntoA y puntoB**/");
-    console.log(vectorOrigin.P3D);
+    console.log(vectorHead.P3D);
 
     console.log("/**Prueba de suma de vectores --> vector + vectorB --> (7,8,9) * (1,2,3)**/");
     var vectorSuma = vector.suma(vectorB);

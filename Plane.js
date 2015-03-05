@@ -45,7 +45,7 @@ Plane.prototype.unitNormal = function () {
 };
 
 Plane.prototype.puntoEnPlano = function (P) {
-    var V = new Vector3Dhead(this.A, this.P);
+    var V = new Vector3Dhead(this.A, P);
     var n = new Plane();
     var N = n.normal();
     if(Math.abs(N.prodPunto(V)) <= 1.0e-15 ){
