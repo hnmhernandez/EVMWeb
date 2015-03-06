@@ -12,6 +12,10 @@ function Point3D(x, y, z) {
     this.Z = z;
 }
 
+function Point3Dcopy(p) {
+    var punto = new Point3D(p.X, p.Y, p.Z);
+    return punto;
+}
 //Metodos
 
 /* Rotar un vertice a lo largo de X */

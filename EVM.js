@@ -234,6 +234,37 @@ function pruebas() {
     } else {
         console.log("puntoB no esta en el plano");
     }
+    
+    
+    console.log("/**PRUEBAS DE OBJECT **/");
+    console.log("/**Creando un nuevo Object **/");
+    var object1 = new Object(3, 3, 4);
+    object1.F[0][0] = puntoA;
+    object1.F[0][1] = puntoB;
+    object1.F[0][2] = puntoC;
+    object1.F[1][0] = puntoD;
+    object1.F[1][1] = puntoA;
+    object1.F[1][2] = puntoB;
+    object1.F[2][0] = puntoC;
+    object1.F[2][1] = puntoD;
+    object1.F[2][2] = puntoA;
+    
+    console.log(object1.V);
+    
+    console.log("/**Copiando object1 a object2 **/");
+    var object2 = new ObjectCopy(object1);
+    console.log(object2);
+    
+    
+    console.log("/**Probando calcularVectoreNormales( **/");
+    object1.calcularVectoresNormales();
+    console.log("/**Vector normal 0**/");
+    console.log(object1.N[0]);
+    console.log("/**Vector normal 1**/");
+    console.log(object1.N[1]);
+    console.log("/**Vector normal 2**/");
+    console.log(object1.N[2]);
+    
 }
 
 
