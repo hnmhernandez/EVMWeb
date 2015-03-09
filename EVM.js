@@ -234,8 +234,8 @@ function pruebas() {
     } else {
         console.log("puntoB no esta en el plano");
     }
-    
-    
+
+
     console.log("/**PRUEBAS DE OBJECT **/");
     console.log("/**Creando un nuevo Object **/");
     var object1 = new Object(3, 3, 4);
@@ -248,14 +248,14 @@ function pruebas() {
     object1.F[2][0] = puntoC;
     object1.F[2][1] = puntoD;
     object1.F[2][2] = puntoA;
-    
+
     console.log(object1.V);
-    
+
     console.log("/**Copiando object1 a object2 **/");
     var object2 = new ObjectCopy(object1);
     console.log(object2);
-    
-    
+
+
     console.log("/**Probando calcularVectoreNormales( **/");
     object1.calcularVectoresNormales();
     console.log("/**Vector normal 0**/");
@@ -264,7 +264,12 @@ function pruebas() {
     console.log(object1.N[1]);
     console.log("/**Vector normal 2**/");
     console.log(object1.N[2]);
-    
+
+
+    console.log("/**Probando el calculo de las coordenadas baricentricas**/");
+    var u = 0.0, v = 0.0, w = 0.0;
+    object1.coordenadasBaricentricas(puntoA, puntoB, puntoC, puntoD, this.u, this.v, this.w);
+    console.log(u + " " + v + " " + w);
 }
 
 
