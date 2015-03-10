@@ -36,6 +36,14 @@ function ObjectCopy(obj) {
 
 
 //Metodos
+// Verifica si dos números tienen el mismo signo
+Object.prototype.mismoSigno = function (number1, number2) {
+    if (((number1 < 0) && (number2 < 0)) || ((number1 >= 0) && (number2 >= 0)))
+        return(true);
+    else
+        return(false);
+};
+
 Object.prototype.calcularVectoresNormales = function () {
     for (var i = 0; i < this.NF; i++) {
         // 3 puntos para calcular 2 vectores para formar un plano
@@ -53,7 +61,7 @@ Object.prototype.triArea2D = function (x1, y1, x2, y2, x3, y3) {
 
 //Calcular las coordenadas baricentricas(u,v,w) para 
 //el punto3D p con respecto al triangulo (a,b,c)
-Object.prototype.coordenadasBaricentricas = function (a, b, c, p, u, v, w) {
+Object.prototype.coordenadasBaricentricas = function (a, b, c, p) {
 
     //Unnormalizar triangulo normal
     var ba = new Vector3Dhead(a, b);
@@ -92,12 +100,117 @@ Object.prototype.coordenadasBaricentricas = function (a, b, c, p, u, v, w) {
 //p: punto.
 //Output: true si p esta dentro del triangulo, false de lo contrario.
 Object.prototype.puntoEnTriangulo = function (a, b, c, p) {
-    var pl = new PlaneWithPoint3D(a, b, c);
-    var u, v, w;
+    var pl = new PlaneWithPoints3D(a, b, c);
+
     if (pl.puntoEnPlano(p)) {
-        this.coordenadasBaricentricas(a, b, c, p, u, v, w);
+        this.coordenadasBaricentricas(a, b, c, p);
         return (v >= 0.0 && w >= 0.0 && (v + w) <= 1.0);
-    }else{
+    } else {
         return false;
     }
+};
+
+//Möller's fast triangle - Detección de colisión de triangulos
+Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
+    var i, vof;
+    var v0, v1, v2; //Para buscar intervalos
+    var aux, d1, d2;
+    var N1, N2; //Normales de T1 y T2
+    var vt1 = new Array(3), vt2 = new Array(3);    //Vertices de los triangulos T1 y T2
+    var dt1 = new Array(3), dt2 = new Array(3);    //Distancia desde los vertices para el plano de T1 y T2
+    var pt1 = new Array(3), pt2 = new Array(3);    //Proyección de los vertices dentro de la linea de intersección
+    var D;  //D= N1 x N2 es la dirección de la linea de intersección L
+    var it1 = new Array(2), it2 = new Array(2);     //Intervalos de T1 y T2
+    var T1 = new PlaneWithPoints3D(A1, B1, C1);     //Triangulos T1 y T2
+    var T2 = new PlaneWithPoints3D(A2, B2, C2);
+
+    //Vertices de T1
+    vt1[0] = new Vector3Dorigin(A1);
+    vt1[1] = new Vector3Dorigin(B1);
+    vt1[2] = new Vector3Dorigin(C1);
+
+    //Vertices de T2
+    vt2[0] = new Vector3Dorigin(A2);
+    vt2[1] = new Vector3Dorigin(B2);
+    vt2[2] = new Vector3Dorigin(C2);
+
+    //Normales de T1 y T2
+    N1 = T1.normal();
+    N2 = T2.normal();
+
+    //Verificar si T1 se encuentra en un lado de P2 (plano de T2)
+    //Ecuación del Plano P2: N2.X + d2 = 0 (Donde X es algun punto en el plano)
+    d2 = -1 * N2.prodPunto(vt2[0]);
+    for (i = 0; i < 3; i++) {
+        dt1[i] = N2.prodPunto(vt1[i]) + d2;
+    }
+    //Si dt2 [i]! = 0 y todos dt2 [i] tienen el mismo signo T2 se encuentra en un lado de P1
+    if ((dt2[0] !== 0) && (dt2[1] !== 0) && (dt2[2] !== 0) && (((dt2[0] < 0) && (dt2[1] < 0) && (dt2[2] < 0)) || ((dt2[0] > 0) && (dt2[1] > 0) && (dt2[2] > 0)))) {
+        return false;
+    }
+
+    //Verificar si T1 y T2 no son co-planar
+    if ((dt1[0] !== 0) || (dt1[1] !== 0) || (dt1[2] !== 0)) {
+        //Dirección de la linea L
+        D = N1.prodCruz(N2);
+
+        //Calcular los ejes para proyectar L
+        aux = Math.abs(D.P3D.X);
+        vof = 0;
+        if (Math.abs(D.P3D.Y) > aux) {
+            aux = Math.abs(D.P3D.Y);
+            vof = 1;
+        }
+
+        if (Math.abs(D.P3D.Z) > aux) {
+            aux = Math.abs(D.P3D.Z);
+            vof = 2;
+        }
+
+        //Proyección de los vertices T1 y T2 dentro de la linea L
+        for (i = 0; i < 3; i++) {
+            switch (vof) {
+                case 0:
+                    pt1[i] = vt1[i].P3D.X;
+                    pt2[i] = vt2[i].P3D.X;
+                    break;
+                case 1:
+                    pt1[i] = vt1[i].P3D.Y;
+                    pt2[i] = vt2[i].P3D.Y;
+                    break;
+                case 2:
+                    pt1[i] = vt1[i].P3D.Z;
+                    pt2[i] = vt2[i].P3D.Z;
+                    break;
+            }
+        }
+
+        //Calcular el intervalo de T1 en L
+        //Determinar el vertice en un lado de P2
+        if (dt1[0] !== 0) {
+            if (dt1[1] !== 0) {
+                if (dt1[2] !== 0) {
+                    if (this.mismoSigno(dt1[0], dt1[1])) {
+                        v0 = 0;
+                        v1 = 2; //Signo diferente
+                        v2 = 1;
+                    } else {
+                        if (this.mismoSigno(dt1[0], dt1[2])) {
+                            v0 = 1;
+                            v1 = 0; // Signo diferente
+                            v2 = 2;
+                        }
+                    }
+                }
+            }
+            else{   //dt[2] = 0
+                //Solo el 3er punto de T1 esta en el plano de T2
+                //si este punto esta dentro/en el triangulo, entonces es una colisión
+                
+            }
+        }
+
+        console.log(pt2);
+    }
+
 };

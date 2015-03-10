@@ -256,6 +256,14 @@ function pruebas() {
     console.log(object2);
 
 
+    console.log("/**Verificando si dos numeros tienen el mismo signo**/");
+    if (object1.mismoSigno(1, -2)) {
+        console.log("SI tienen el mismo signo");
+    } else {
+        console.log("NO tienen el mismo signo");
+    }
+
+
     console.log("/**Probando calcularVectoreNormales( **/");
     object1.calcularVectoresNormales();
     console.log("/**Vector normal 0**/");
@@ -267,9 +275,25 @@ function pruebas() {
 
 
     console.log("/**Probando el calculo de las coordenadas baricentricas**/");
-    var u = 0.0, v = 0.0, w = 0.0;
-    object1.coordenadasBaricentricas(puntoA, puntoB, puntoC, puntoD, this.u, this.v, this.w);
+
+    object1.coordenadasBaricentricas(puntoA, puntoB, puntoC, puntoD);
+
     console.log(u + " " + v + " " + w);
+
+    console.log("/**Verificando si el puntoA esta en el triangulo**/");
+    if (object1.puntoEnTriangulo(puntoA, puntoC, puntoB, puntoA)) {
+        console.log("El punto P SI esta en el triangulo");
+    } else {
+        console.log("El punto P NO esta en el triangulo");
+    }
+
+    console.log("/**Verificando si el triangulo esta en el triangulo**/");
+    if (object1.trianguloEnTriangulo(puntoA, puntoC, puntoB, puntoD, puntoC, puntoA)) {
+        console.log("SI esta en el triangulo");
+    } else {
+        console.log("NO esta en el triangulo");
+    }
+
 }
 
 
