@@ -36,6 +36,13 @@ function ObjectCopy(obj) {
 
 
 //Metodos
+Object.prototype.swap = function () {
+    var aux;
+    aux = number1;
+    number1 = number2;
+    number2 = aux;
+};
+
 // Verifica si dos números tienen el mismo signo
 Object.prototype.mismoSigno = function (number1, number2) {
     if (((number1 < 0) && (number2 < 0)) || ((number1 >= 0) && (number2 >= 0)))
@@ -149,8 +156,9 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
         return false;
     }
 
-    //Verificar si T1 y T2 no son co-planar
+    // Verify if T1 and T2 are not co-planar ----------------------------------
     if ((dt1[0] !== 0) || (dt1[1] !== 0) || (dt1[2] !== 0)) {
+        
         //Dirección de la linea L
         D = N1.prodCruz(N2);
 
@@ -166,7 +174,6 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
             aux = Math.abs(D.P3D.Z);
             vof = 2;
         }
-
         //Proyección de los vertices T1 y T2 dentro de la linea L
         for (i = 0; i < 3; i++) {
             switch (vof) {
@@ -185,32 +192,366 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
             }
         }
 
-        //Calcular el intervalo de T1 en L
-        //Determinar el vertice en un lado de P2
-        if (dt1[0] !== 0) {
-            if (dt1[1] !== 0) {
-                if (dt1[2] !== 0) {
+
+        // Calculate interval of T1 on L --------------------------------------
+        // Determine the vertex on one side of P2
+        if (dt1[0] !== 0)
+        {
+            
+            if (dt1[1] !== 0)
+            {
+                
+                if (dt1[2] !== 0)
+                {
+                    
                     if (this.mismoSigno(dt1[0], dt1[1])) {
                         v0 = 0;
-                        v1 = 2; //Signo diferente
+                        v1 = 2; // Different sign
                         v2 = 1;
-                    } else {
+                        
+                    }
+                    else {
                         if (this.mismoSigno(dt1[0], dt1[2])) {
+                            v0 = 0;
+                            v1 = 1; // Different sign
+                            v2 = 2;
+                        }
+                        else {
                             v0 = 1;
-                            v1 = 0; // Signo diferente
+                            v1 = 0; // Different sign
+                            v2 = 2;
+                        }
+                    }
+                }
+                else // dt1[2] = 0
+                {
+                    // Only the 3rd point of T1 is in the plane of T2
+                    // if this point its in/on the triangle, there's a collision 
+                    return(this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[2].P3D));
+                    //--
+                    if (this.mismoSigno(dt1[0], dt1[1])) {
+                        v0 = 0;
+                        v1 = 2; // Different sign
+                        v2 = 1;
+                    }
+                    else
+                    {
+                        if (dt1[0] > 0)
+                        {
+                            v0 = 0;
+                            v1 = 1; // Different sign
+                            v2 = 2;
+                        }
+                        else
+                        {
+                            v0 = 1;
+                            v1 = 0; // Different sign
                             v2 = 2;
                         }
                     }
                 }
             }
-            else{   //dt[2] = 0
-                //Solo el 3er punto de T1 esta en el plano de T2
-                //si este punto esta dentro/en el triangulo, entonces es una colisión
-                
+            else // dt1[1] = 0
+            {
+                if (dt1[2] !== 0)
+                {
+                    // Only the 3rd point of T1 is in the plane of T2
+                    // if this point its in/on the triangle, there's a collision 
+                    return(this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[1].P3D));
+                    //--
+
+                    if (sameSign(dt1[0], dt1[2]))
+                    {
+                        v0 = 0;
+                        v1 = 1; // Different sign
+                        v2 = 2;
+                    }
+                    else
+                    {
+                        if (dt1[0] > 0)
+                        {
+                            v0 = 0;
+                            v1 = 2; // Different sign
+                            v2 = 1;
+                        }
+                        else
+                        {
+                            v0 = 1;
+                            v1 = 0; // Different sign
+                            v2 = 2;
+                        }
+                    }
+                }
+                else
+                {
+                    // Only the 2nd or 3rd points of T1 are in the plane of T2
+                    if (this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[1].P3D) || this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[2].P3D))
+                        return(true);
+                    //--
+                    v0 = 1;
+                    v1 = 0; // Different sign
+                    v2 = 2;
+                }
             }
         }
+        else // dt1[0] = 0
+        {
+            if (dt1[1] !== 0)
+            {
+                if (dt1[2] !== 0)
+                {
+                    // Only the 3rd point of T1 is in the plane of T2
+                    // if this point its in/on the triangle, there's a collision 
+                    return(this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[0].P3D));
+                    //--
 
-        console.log(pt2);
+                    if (this.mismoSigno(dt1[1], dt1[2])) {
+                        v0 = 1;
+                        v1 = 0; // Different sign
+                        v2 = 2;
+                    }
+                    else
+                    {
+                        if (dt1[1] > 0) {
+                            v0 = 0;
+                            v1 = 2; // Different sign
+                            v2 = 1;
+                        }
+                        else {
+                            v0 = 0;
+                            v1 = 1; // Different sign
+                            v2 = 2;
+                        }
+                    }
+                }
+                else // dt1[2] = 0
+                {
+                    // Only the 1nd or 3rd points of T1 are in the plane of T2
+                    if (this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[0].P3D) || this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[2].P3D))
+                        return(true);
+                    //--
+                    v0 = 0;
+                    v1 = 1; // Different sign
+                    v2 = 2;
+                }
+            }
+            else // dt1[1] = 0
+            {
+                if (dt1[2] !== 0)
+                {
+                    // Only the 2nd or 3rd points of T1 are in the plane of T2
+                    if (this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[0].P3D) || this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[1].P3D))
+                        return(true);
+                    //--
+                    v0 = 0;
+                    v1 = 2; // Different sign
+                    v2 = 1;
+                }
+            }
+        }
+        // Calculate 1st interception of T1 with line L
+        it1[0] = pt1[v0] + (pt1[v1] - pt1[v0]) * (dt1[v0] / (dt1[v0] - dt1[v1]));
+        // Calculate 2nd interception of T1 with line L
+        it1[1] = pt1[v1] + (pt1[v2] - pt1[v1]) * (dt1[v1] / (dt1[v1] - dt1[v2]));
+
+
+        if (it1[0] > it1[1]) {
+            number1 = it1[0];
+            number2 = it1[1];
+            this.swap();
+            it1[0] = number1;
+            it1[1] = number2;
+        }
+
+
+        // Calculate interval of T2 on L --------------------------------------
+        if (dt2[0] !== 0)
+        {
+            
+            if (dt2[1] !== 0)
+            {
+                
+                if (dt2[2] !== 0)
+                {
+                    
+                    if (this.mismoSigno(dt2[0], dt2[1])) {
+                        v0 = 0;
+                        v1 = 2; // Different sign
+                        v2 = 1;
+                       
+                    }
+                    else {
+                        if (this.mismoSigno(dt2[0], dt2[2])) {
+                            v0 = 0;
+                            v1 = 1; // Different sign
+                            v2 = 2;
+                             
+                        }
+                        else {
+                            
+                            v0 = 1;
+                            v1 = 0; // Different sign
+                            v2 = 2;
+                        }
+                    }
+                }
+                else // dt2[2] = 0
+                {
+                    // Only the 3rd point of T2 is in the plane of T1
+                    // if this point its in/on the triangle, there's a collision 
+                    return(this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[2].P3D));
+                    //--
+
+                    if (this.mismoSigno(dt2[0], dt2[1])) {
+                        v0 = 0;
+                        v1 = 2; // Different sign
+                        v2 = 1;
+                    }
+                    else
+                    {
+                        if (dt2[0] > 0)
+                        {
+                            v0 = 0;
+                            v1 = 1; // Different sign
+                            v2 = 2;
+                        }
+                        else
+                        {
+                            v0 = 1;
+                            v1 = 0; // Different sign
+                            v2 = 2;
+                        }
+                    }
+                }
+            }
+            else // dt2[1] = 0
+            {
+                if (dt2[2] !== 0)
+                {
+                    // Only the 3rd point of T2 is in the plane of T1
+                    // if this point its in/on the triangle, there's a collision 
+                    return(this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[1].P3D));
+                    //--
+
+                    if (this.mismoSigno(dt2[0], dt2[2]))
+                    {
+                        v0 = 0;
+                        v1 = 1; // Different sign
+                        v2 = 2;
+                    }
+                    else
+                    {
+                        if (dt2[0] > 0)
+                        {
+                            v0 = 0;
+                            v1 = 2; // Different sign
+                            v2 = 1;
+                        }
+                        else
+                        {
+                            v0 = 1;
+                            v1 = 0; // Different sign
+                            v2 = 2;
+                        }
+                    }
+                }
+                else
+                {
+                    // Only the 2nd or 3rd points of T1 are in the plane of T2
+                    if (this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[1].P3D) || this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[2].P3D))
+                        return(true);
+                    //--
+                    v0 = 1;
+                    v1 = 0; // Different sign
+                    v2 = 2;
+                }
+            }
+        }
+        else // dt2[0] = 0
+        {
+            if (dt2[1] !== 0)
+            {
+                if (dt2[2] !== 0)
+                {
+                    // Only the 3rd point of T2 is in the plane of T1
+                    // if this point its in/on the triangle, there's a collision 
+                    return(this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[0].P3D));
+                    //--
+
+                    if (this.mismoSigno(dt2[1], dt2[2])) {
+                        v0 = 1;
+                        v1 = 0; // Different sign
+                        v2 = 2;
+                    }
+                    else
+                    {
+                        if (dt2[1] > 0) {
+                            v0 = 0;
+                            v1 = 2; // Different sign
+                            v2 = 1;
+                        }
+                        else {
+                            v0 = 0;
+                            v1 = 1; // Different sign
+                            v2 = 2;
+                        }
+                    }
+                }
+                else // dt2[2] = 0
+                {
+                    // Only the 2nd or 3rd points of T1 are in the plane of T2
+                    if (this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[0].P3D) || this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[2].P3D))
+                        return(true);
+                    //--
+                    v0 = 0;
+                    v1 = 1; // Different sign
+                    v2 = 2;
+                }
+            }
+            else // dt2[1] = 0
+            {
+                if (dt2[2] !== 0)
+                {
+                    // Only the 2nd or 3rd points of T1 are in the plane of T2
+                    if (this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[0].P3D) || this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[1].P3D))
+                        return(true);
+                    //--
+                    v0 = 0;
+                    v1 = 2; // Different sign
+                    v2 = 1;
+                }
+                else
+                {
+                    // Esto no va a ocurrir porque sino serian coplanares
+                }
+            }
+        }
+        // Calculate 1st interception of T2 with line L
+        it2[0] = pt2[v0] + (pt2[v1] - pt2[v0]) * (dt2[v0] / (dt2[v0] - dt2[v1]));
+        // Calculate 2nd interception of T2 with line L
+        it2[1] = pt2[v1] + (pt2[v2] - pt2[v1]) * (dt2[v1] / (dt2[v1] - dt2[v2]));
+
+        if (it2[0] > it2[1]) {
+            number1 = it2[0];
+            number2 = it2[1];
+            swap();
+            it2[0] = number1;
+            it2[1] = number2;
+            
+        }
+
+
+        // Verify if the intervals overlap ------------------------------------
+        if ((it1[1] < it2[0]) || (it2[1] < it1[0])){
+            return(false);
+        }
     }
-
+    // If T1 and T2 are co-planar do point-in-triangle test -------------------
+    else {
+        // Point in triangle test
+        if (!this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[0].P3D) && !this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[1].P3D) && !this.puntoEnTriangulo(vt1[0].P3D, vt1[1].P3D, vt1[2].P3D, vt2[2].P3D) && !this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[0].P3D) && !this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[1].P3D) && !this.puntoEnTriangulo(vt2[0].P3D, vt2[1].P3D, vt2[2].P3D, vt1[2].P3D)) {
+            return(false);
+        }
+    }
+    return(true);
 };

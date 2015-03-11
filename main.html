@@ -10,10 +10,10 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
+
         <!------------JS glMatrix funciones de matrices en Javascript---------->
         <script src="glMatrix.min.js"></script>
-        
+
         <!--Shader para el grado de precision y color de todos los pixeles----->
         <script id="shader-fs" type="x-shader/x-fragment">    
             #ifdef GL_ES
@@ -24,7 +24,7 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
             gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
             }
         </script>
-        
+
         <!--Shader que posiciona cada vertice en el lienzo mediante las matrices----->
         <script id="shader-vs" type="x-shader/x-vertex">
             attribute vec3 aVertexPosition;
@@ -36,7 +36,7 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
             gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
             }
         </script>
-        
+
         <!--------Libreria que implementa todas las funciones del EVM---------->
         <script src="Point3D.js"></script>
         <script src="Vector3D.js"></script>
@@ -44,11 +44,13 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
         <script src="Plane.js"></script>
         <script src="Object.js"></script>
         <script src="EVM.js"></script>  
-        
+
     </head>
     <body onload="webGLStart()">
         <canvas id="leccion1-canvas" width="640" height="480">
             Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
         </canvas>
+
+        <input type="file" id="file"/>
     </body>
 </html>

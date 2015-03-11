@@ -149,6 +149,9 @@ function pruebas() {
     var puntoB = new Point3D(1, 5, 7);
     var puntoC = new Point3D(1, -8, 4);
     var puntoD = new Point3D(3, 5, 2);
+    var puntoE = new Point3D(10, 5, 1);
+    var puntoF = new Point3D(9, 5, 1);
+    var puntoG = new Point3D(8, 7, 6);
 
     var line = new Line3D(puntoA, puntoB);
     console.log("/**Imprimiendo line(PuntoA, PuntoB)**/");
@@ -287,13 +290,12 @@ function pruebas() {
         console.log("El punto P NO esta en el triangulo");
     }
 
-    console.log("/**Verificando si el triangulo esta en el triangulo**/");
-    if (object1.trianguloEnTriangulo(puntoA, puntoC, puntoB, puntoD, puntoC, puntoA)) {
-        console.log("SI esta en el triangulo");
+    console.log("/**Verificando si los triangulos colisionan**/");
+    if (object1.trianguloEnTriangulo(puntoA, puntoB, puntoC, puntoE, puntoF, puntoG)) {
+        console.log("SI colisionan");
     } else {
-        console.log("NO esta en el triangulo");
+        console.log("NO colisionan");
     }
-
 }
 
 
