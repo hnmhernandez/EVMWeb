@@ -241,18 +241,87 @@ function pruebas() {
 
     console.log("/**PRUEBAS DE OBJECT **/");
     console.log("/**Creando un nuevo Object **/");
-    var object1 = new Object(3, 3, 4);
-    object1.F[0][0] = puntoA;
-    object1.F[0][1] = puntoB;
-    object1.F[0][2] = puntoC;
-    object1.F[1][0] = puntoD;
-    object1.F[1][1] = puntoA;
-    object1.F[1][2] = puntoB;
-    object1.F[2][0] = puntoC;
-    object1.F[2][1] = puntoD;
-    object1.F[2][2] = puntoA;
+    var object1 = new Object(8, 12, 12);
+    
+    var puntoAA = new Point3D(0, 0, 0);
+    var puntoBB = new Point3D(0, 1, 0);
+    var puntoCC = new Point3D(1, 0, 0);
+    var puntoDD = new Point3D(1, 1, 0);
+    var puntoEE = new Point3D(0, 0, 1);
+    var puntoFF = new Point3D(0, 1, 1);
+    var puntoGG = new Point3D(1, 0, 1);
+    var puntoHH = new Point3D(1, 1, 1);
+    object1.V[0] = puntoAA;
+    object1.V[1] = puntoBB;
+    object1.V[2] = puntoCC;
+    object1.V[3] = puntoDD;
+    object1.V[4] = puntoEE;
+    object1.V[5] = puntoFF;
+    object1.V[6] = puntoGG;
+    object1.V[7] = puntoHH;
+    
+    object1.F[0][0] = 3;
+    object1.F[0][1] = 0;
+    object1.F[0][2] = 1;
+    object1.F[0][3] = 3;
+    
+    object1.F[1][0] = 3;
+    object1.F[1][1] = 0;
+    object1.F[1][2] = 3;
+    object1.F[1][3] = 2;
+    
+    object1.F[2][0] = 3;
+    object1.F[2][1] = 4;
+    object1.F[2][2] = 5;
+    object1.F[2][3] = 0;
+    
+    object1.F[3][0] = 3;
+    object1.F[3][1] = 4;
+    object1.F[3][2] = 1;
+    object1.F[3][3] = 0;
+    
+    object1.F[4][0] = 3;
+    object1.F[4][1] = 1;
+    object1.F[4][2] = 5;
+    object1.F[4][3] = 7;
+    
+    object1.F[5][0] = 3;
+    object1.F[5][1] = 1;
+    object1.F[5][2] = 7;
+    object1.F[5][3] = 3;
+    
+    object1.F[6][0] = 3;
+    object1.F[6][1] = 2;
+    object1.F[6][2] = 7;
+    object1.F[6][3] = 6;
+    
+    object1.F[7][0] = 3;
+    object1.F[7][1] = 2;
+    object1.F[7][2] = 3;
+    object1.F[7][3] = 7;
+    
+    object1.F[8][0] = 3;
+    object1.F[8][1] = 0;
+    object1.F[8][2] = 6;
+    object1.F[8][3] = 4;
+    
+    object1.F[9][0] = 3;
+    object1.F[9][1] = 0;
+    object1.F[9][2] = 2;
+    object1.F[9][3] = 6;
+    
+    object1.F[10][0] = 3;
+    object1.F[10][1] = 4;
+    object1.F[10][2] = 7;
+    object1.F[10][3] = 5;
+    
+    object1.F[11][0] = 3;
+    object1.F[11][1] = 4;
+    object1.F[11][2] = 6;
+    object1.F[11][3] = 7;
+    
 
-    console.log(object1.V);
+    console.log(object1);
 
     console.log("/**Copiando object1 a object2 **/");
     var object2 = new ObjectCopy(object1);
@@ -269,12 +338,19 @@ function pruebas() {
 
     console.log("/**Probando calcularVectoreNormales( **/");
     object1.calcularVectoresNormales();
-    console.log("/**Vector normal 0**/");
     console.log(object1.N[0]);
-    console.log("/**Vector normal 1**/");
     console.log(object1.N[1]);
-    console.log("/**Vector normal 2**/");
     console.log(object1.N[2]);
+    console.log(object1.N[3]);
+    console.log(object1.N[4]);
+    console.log(object1.N[5]);
+    console.log(object1.N[6]);
+    console.log(object1.N[7]);
+    console.log(object1.N[8]);
+    console.log(object1.N[9]);
+    console.log(object1.N[10]);
+    console.log(object1.N[11]);
+    
 
 
     console.log("/**Probando el calculo de las coordenadas baricentricas**/");
@@ -296,6 +372,9 @@ function pruebas() {
     } else {
         console.log("NO colisionan");
     }
+    
+    console.log("Probando lectura de un objecto desde archivo");
+//    var objectFile = new ObjectFile("esfera.off", false);
 }
 
 

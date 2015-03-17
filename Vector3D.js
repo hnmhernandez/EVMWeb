@@ -40,7 +40,6 @@ Vector3D.prototype.prodCruz = function (u) {
     var vectorResultante = new Vector3D(this.P3D.Y * u.P3D.Z - this.P3D.Z * u.P3D.Y,
             this.P3D.Z * u.P3D.X - this.P3D.X * u.P3D.Z,
             this.P3D.X * u.P3D.Y - this.P3D.Y * u.P3D.X);
-
     return vectorResultante;
 };
 

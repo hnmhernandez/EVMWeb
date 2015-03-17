@@ -27,13 +27,38 @@ function ObjectCopy(obj) {
     return objeto;
 }
 
+function ObjectFile(filename, esRGB) {
+    console.log(filename[0]);
+    var lector = new FileReader();
+    lector.onload = function (e) {
+        var contenido = e.target.result;
+        contenido = contenido.split("\n");
 
-/*ESPERAR POR KIARA*/
-//function Object(filename, esRGB){
-//    
-//}
+        if (contenido[0] === "OFF") {
+            var vertices = parseInt(contenido[1].split(" ")[0]);
+            var caras = parseInt(contenido[1].split(" ")[1]);
+            var bordes = parseInt(contenido[1].split(" ")[2]);
+
+            var object = new Object(vertices, caras, bordes);
+            var punto;
+            for (var i = 0; i < vertices; i++) {
+                punto = new Point3D(parseInt(contenido[i + 2].split(" ")[0]), parseInt(contenido[i + 2].split(" ")[1]), parseInt(contenido[i + 2].split(" ")[2]));
+                object.V[i] = punto;
+            }
+
+            for (var i = 0; i < caras; i++){
+                
+            }
 
 
+
+        } else {
+            alert("Esto no es un archivo .off, todo archivo .off debe comenzar con la línea OFF");
+        }
+    };
+    lector.readAsText(filename[0]);
+//    console.log(lector.target);
+}
 
 //Metodos
 Object.prototype.swap = function () {
@@ -52,11 +77,17 @@ Object.prototype.mismoSigno = function (number1, number2) {
 };
 
 Object.prototype.calcularVectoresNormales = function () {
+    var indexVector;
     for (var i = 0; i < this.NF; i++) {
         // 3 puntos para calcular 2 vectores para formar un plano
-        var puntoA = new Point3Dcopy(this.F[i][0]);
-        var puntoB = new Point3Dcopy(this.F[i][1]);
-        var puntoC = new Point3Dcopy(this.F[i][2]);
+        indexVector = this.F[i][0];
+        var puntoA = new Point3Dcopy(this.V[indexVector]);
+        indexVector = this.F[i][1];
+        var puntoB = new Point3Dcopy(this.V[indexVector]);
+        indexVector = this.F[i][2];
+        var puntoC = new Point3Dcopy(this.V[indexVector]);
+//        console.log(this.F[i][0]);
+
         var p = new PlaneWithPoints3D(puntoA, puntoB, puntoC);
         this.N[i] = p.unitNormal().P3D;
     }
@@ -158,7 +189,7 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
 
     // Verify if T1 and T2 are not co-planar ----------------------------------
     if ((dt1[0] !== 0) || (dt1[1] !== 0) || (dt1[2] !== 0)) {
-        
+
         //Dirección de la linea L
         D = N1.prodCruz(N2);
 
@@ -197,18 +228,18 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
         // Determine the vertex on one side of P2
         if (dt1[0] !== 0)
         {
-            
+
             if (dt1[1] !== 0)
             {
-                
+
                 if (dt1[2] !== 0)
                 {
-                    
+
                     if (this.mismoSigno(dt1[0], dt1[1])) {
                         v0 = 0;
                         v1 = 2; // Different sign
                         v2 = 1;
-                        
+
                     }
                     else {
                         if (this.mismoSigno(dt1[0], dt1[2])) {
@@ -367,28 +398,28 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
         // Calculate interval of T2 on L --------------------------------------
         if (dt2[0] !== 0)
         {
-            
+
             if (dt2[1] !== 0)
             {
-                
+
                 if (dt2[2] !== 0)
                 {
-                    
+
                     if (this.mismoSigno(dt2[0], dt2[1])) {
                         v0 = 0;
                         v1 = 2; // Different sign
                         v2 = 1;
-                       
+
                     }
                     else {
                         if (this.mismoSigno(dt2[0], dt2[2])) {
                             v0 = 0;
                             v1 = 1; // Different sign
                             v2 = 2;
-                             
+
                         }
                         else {
-                            
+
                             v0 = 1;
                             v1 = 0; // Different sign
                             v2 = 2;
@@ -537,12 +568,12 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
             swap();
             it2[0] = number1;
             it2[1] = number2;
-            
+
         }
 
 
         // Verify if the intervals overlap ------------------------------------
-        if ((it1[1] < it2[0]) || (it2[1] < it1[0])){
+        if ((it1[1] < it2[0]) || (it2[1] < it1[0])) {
             return(false);
         }
     }
