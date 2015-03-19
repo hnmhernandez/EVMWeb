@@ -591,3 +591,22 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
     }
     return(true);
 };
+
+//Buscar un vertice en el objecto. Si el vertice esta en el objecto, retorna
+//la posicion, si no, inserta este y retorna la posicion
+Object.prototype.vertice = function(v){
+    var i = 0;
+    var band = false;
+    while(i<this.NV && !band){
+        if(this.V[i].esIgual(v)){
+            band = true;
+        }else{
+            i++;
+        }
+    }
+    if(!band){
+        this.V.push(v);
+        this.NV++;
+    }
+    return i;
+}
