@@ -41,19 +41,24 @@ function ObjectFile(filename, esRGB) {
 
             var object = new Object(vertices, caras, bordes);
             var punto;
+            var indexVertice;
             for (var i = 0; i < vertices; i++) {
                 punto = new Point3D(parseInt(contenido[i + 2].split(" ")[0]), parseInt(contenido[i + 2].split(" ")[1]), parseInt(contenido[i + 2].split(" ")[2]));
                 object.V[i] = punto;
             }
 
             for (var i = 0; i < caras; i++){
-                
+                indexVertice = parseInt(contenido[vertices + i].split(" ")[0]);
+                for(var j = 1; j <= indexVertices; j++){
+                    object.F[i][j] = parseInt(contenido[vertices + i].split(" ")[j];
+                }
             }
-
-
-
+            object.calcularVectoresNormales();
+            
+            return object;
         } else {
             alert("Esto no es un archivo .off, todo archivo .off debe comenzar con la línea OFF");
+            return null;
         }
     };
     lector.readAsText(filename[0]);
