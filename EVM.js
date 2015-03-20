@@ -143,6 +143,7 @@ function drawScene() {
 }
 
 /**FUNCION SOLO DE PRUEBAS**/
+
 function pruebas() {
 
     var puntoA = new Point3D(4, 3, 5);
@@ -242,7 +243,6 @@ function pruebas() {
     console.log("/**PRUEBAS DE OBJECT **/");
     console.log("/**Creando un nuevo Object **/");
     var object1 = new Object(8, 12, 12);
-    
     var puntoAA = new Point3D(0, 0, 0);
     var puntoBB = new Point3D(0, 1, 0);
     var puntoCC = new Point3D(1, 0, 0);
@@ -374,7 +374,7 @@ function pruebas() {
     }
     
     console.log("Probando lectura de un objecto desde archivo");
-//    var objectFile = new ObjectFile("esfera.off", false);
+    //var objectFile = new ObjectFile(this.file, false);
 }
 
 

@@ -48,13 +48,12 @@ function ObjectFile(filename, esRGB) {
             }
 
             for (var i = 0; i < caras; i++){
-                indexVertice = parseInt(contenido[vertices + i].split(" ")[0]);
-                for(var j = 1; j <= indexVertices; j++){
-                    object.F[i][j] = parseInt(contenido[vertices + i].split(" ")[j];
+                indexVertice = parseInt(contenido[(vertices+2) + i].split(" ")[0]);
+                for(var j = 1; j <= indexVertice; j++){
+                    object.F[i][j] = parseInt(contenido[(vertices+2) + i].split(" ")[j]);
                 }
             }
             object.calcularVectoresNormales();
-            
             return object;
         } else {
             alert("Esto no es un archivo .off, todo archivo .off debe comenzar con la línea OFF");
@@ -85,11 +84,11 @@ Object.prototype.calcularVectoresNormales = function () {
     var indexVector;
     for (var i = 0; i < this.NF; i++) {
         // 3 puntos para calcular 2 vectores para formar un plano
-        indexVector = this.F[i][0];
-        var puntoA = new Point3Dcopy(this.V[indexVector]);
         indexVector = this.F[i][1];
-        var puntoB = new Point3Dcopy(this.V[indexVector]);
+        var puntoA = new Point3Dcopy(this.V[indexVector]);
         indexVector = this.F[i][2];
+        var puntoB = new Point3Dcopy(this.V[indexVector]);
+        indexVector = this.F[i][3];
         var puntoC = new Point3Dcopy(this.V[indexVector]);
 //        console.log(this.F[i][0]);
 
