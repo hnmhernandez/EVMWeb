@@ -18,12 +18,12 @@ function Point3Dcopy(p) {
 }
 //Metodos
 Point3D.prototype.esIgual = function(v){
-    if(this.X === v.X && this.Y == v.Y && this.Z == v.Z){
+    if(this.X === v.X && this.Y === v.Y && this.Z === v.Z){
         return true;
     }else{
         return false;
     }
-}
+};
 
 /* Rotar un vertice a lo largo de X */
 Point3D.prototype.rotateOnX = function (angle) {

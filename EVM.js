@@ -251,6 +251,19 @@ function pruebas() {
     var puntoFF = new Point3D(0, 1, 1);
     var puntoGG = new Point3D(1, 0, 1);
     var puntoHH = new Point3D(1, 1, 1);
+
+    var puntoJJ = new Point3D(2, 4, 5);
+    var puntoKK = new Point3D(7, 3, 7);
+    var puntoLL = new Point3D(9, 7, 6);
+    var puntoMM = new Point3D(7, 5, 3);
+    var puntoNN = new Point3D(7, 4, 4);
+    var puntoOO = new Point3D(7, 4, 6);
+    var puntoPP = new Point3D(8, 8, 3);
+    var puntoQQ = new Point3D(5, 3, 2);
+
+
+    var puntoII = new Point3D(2, 5, 9);
+
     object1.V[0] = puntoAA;
     object1.V[1] = puntoBB;
     object1.V[2] = puntoCC;
@@ -259,73 +272,149 @@ function pruebas() {
     object1.V[5] = puntoFF;
     object1.V[6] = puntoGG;
     object1.V[7] = puntoHH;
-    
+
+
     object1.F[0][0] = 3;
     object1.F[0][1] = 0;
     object1.F[0][2] = 1;
     object1.F[0][3] = 3;
-    
+
     object1.F[1][0] = 3;
     object1.F[1][1] = 0;
     object1.F[1][2] = 3;
     object1.F[1][3] = 2;
-    
+
     object1.F[2][0] = 3;
     object1.F[2][1] = 4;
     object1.F[2][2] = 5;
     object1.F[2][3] = 0;
-    
+
     object1.F[3][0] = 3;
     object1.F[3][1] = 4;
     object1.F[3][2] = 1;
     object1.F[3][3] = 0;
-    
+
     object1.F[4][0] = 3;
     object1.F[4][1] = 1;
     object1.F[4][2] = 5;
     object1.F[4][3] = 7;
-    
+
     object1.F[5][0] = 3;
     object1.F[5][1] = 1;
     object1.F[5][2] = 7;
     object1.F[5][3] = 3;
-    
+
     object1.F[6][0] = 3;
     object1.F[6][1] = 2;
     object1.F[6][2] = 7;
     object1.F[6][3] = 6;
-    
+
     object1.F[7][0] = 3;
     object1.F[7][1] = 2;
     object1.F[7][2] = 3;
     object1.F[7][3] = 7;
-    
+
     object1.F[8][0] = 3;
     object1.F[8][1] = 0;
     object1.F[8][2] = 6;
     object1.F[8][3] = 4;
-    
+
     object1.F[9][0] = 3;
     object1.F[9][1] = 0;
     object1.F[9][2] = 2;
     object1.F[9][3] = 6;
-    
+
     object1.F[10][0] = 3;
     object1.F[10][1] = 4;
     object1.F[10][2] = 7;
     object1.F[10][3] = 5;
-    
+
     object1.F[11][0] = 3;
     object1.F[11][1] = 4;
     object1.F[11][2] = 6;
     object1.F[11][3] = 7;
-    
+
+
+    var object2 = new Object(8, 12, 12);
+
+    object2.V[0] = puntoJJ;
+    object2.V[1] = puntoKK;
+    object2.V[2] = puntoLL;
+    object2.V[3] = puntoMM;
+    object2.V[4] = puntoNN;
+    object2.V[5] = puntoOO;
+    object2.V[6] = puntoPP;
+    object2.V[7] = puntoQQ;
+
+
+    object2.F[0][0] = 3;
+    object2.F[0][1] = 0;
+    object2.F[0][2] = 3;
+    object2.F[0][3] = 3;
+
+    object2.F[1][0] = 3;
+    object2.F[1][1] = 0;
+    object2.F[1][2] = 2;
+    object2.F[1][3] = 2;
+
+    object2.F[2][0] = 3;
+    object2.F[2][1] = 4;
+    object2.F[2][2] = 1;
+    object2.F[2][3] = 0;
+
+    object2.F[3][0] = 3;
+    object2.F[3][1] = 4;
+    object2.F[3][2] = 1;
+    object2.F[3][3] = 0;
+
+    object2.F[4][0] = 3;
+    object2.F[4][1] = 1;
+    object2.F[4][2] = 5;
+    object2.F[4][3] = 7;
+
+    object2.F[5][0] = 3;
+    object2.F[5][1] = 3;
+    object2.F[5][2] = 7;
+    object2.F[5][3] = 2;
+
+    object2.F[6][0] = 3;
+    object2.F[6][1] = 2;
+    object2.F[6][2] = 1;
+    object2.F[6][3] = 6;
+
+    object2.F[7][0] = 3;
+    object2.F[7][1] = 2;
+    object2.F[7][2] = 3;
+    object2.F[7][3] = 7;
+
+    object2.F[8][0] = 3;
+    object2.F[8][1] = 0;
+    object2.F[8][2] = 2;
+    object2.F[8][3] = 4;
+
+    object2.F[9][0] = 3;
+    object2.F[9][1] = 6;
+    object2.F[9][2] = 2;
+    object2.F[9][3] = 6;
+
+    object2.F[10][0] = 3;
+    object2.F[10][1] = 4;
+    object2.F[10][2] = 7;
+    object2.F[10][3] = 5;
+
+    object2.F[11][0] = 3;
+    object2.F[11][1] = 4;
+    object2.F[11][2] = 2;
+    object2.F[11][3] = 7;
+
+
+
 
     console.log(object1);
 
     console.log("/**Copiando object1 a object2 **/");
-    var object2 = new ObjectCopy(object1);
-    console.log(object2);
+    var object3 = new ObjectCopy(object1);
+    console.log(object3);
 
 
     console.log("/**Verificando si dos numeros tienen el mismo signo**/");
@@ -350,7 +439,7 @@ function pruebas() {
     console.log(object1.N[9]);
     console.log(object1.N[10]);
     console.log(object1.N[11]);
-    
+
 
 
     console.log("/**Probando el calculo de las coordenadas baricentricas**/");
@@ -372,9 +461,39 @@ function pruebas() {
     } else {
         console.log("NO colisionan");
     }
-    
+
     console.log("Probando lectura de un objecto desde archivo");
     //var objectFile = new ObjectFile(this.file, false);
+
+    console.log("Esta el vertice en el objecto?");
+    var posicion = object1.estaVertice(puntoII);
+    console.log(posicion);
+
+    console.log("Insertando una nueva cara");
+    var cara = new Array();
+    cara[0] = puntoAA;
+    cara[1] = puntoGG;
+    cara[2] = puntoCC;
+
+    object1.nuevaCara(cara);
+    console.log(object1.F[12]);
+
+    console.log("Probando rotacion");
+//    object1.rotar(45, 'Z');
+//    console.log(object1.V[1]);
+    console.log("Probando translacion");
+//    object1.transladar(45,45,45);
+//    console.log(object1.V[1]);
+    console.log("Probando escalado");
+    object1.transladar(45, 45, 45);
+//    console.log(object1.V[1]);
+    console.log("Probando colision entre dos objectos");
+    console.log(object2);
+    if (object1.colision(object2)) {
+        console.log("SI colisionan");
+    } else {
+        console.log("NO colisionan");
+    }
 }
 
 

@@ -28,7 +28,6 @@ function ObjectCopy(obj) {
 }
 
 function ObjectFile(filename, esRGB) {
-    console.log(filename[0]);
     var lector = new FileReader();
     lector.onload = function (e) {
         var contenido = e.target.result;
@@ -47,13 +46,14 @@ function ObjectFile(filename, esRGB) {
                 object.V[i] = punto;
             }
 
-            for (var i = 0; i < caras; i++){
-                indexVertice = parseInt(contenido[(vertices+2) + i].split(" ")[0]);
-                for(var j = 1; j <= indexVertice; j++){
-                    object.F[i][j] = parseInt(contenido[(vertices+2) + i].split(" ")[j]);
+            for (var i = 0; i < caras; i++) {
+                indexVertice = parseInt(contenido[(vertices + 2) + i].split(" ")[0]);
+                for (var j = 1; j <= indexVertice; j++) {
+                    object.F[i][j] = parseInt(contenido[(vertices + 2) + i].split(" ")[j]);
                 }
             }
             object.calcularVectoresNormales();
+            console.log(object);
             return object;
         } else {
             alert("Esto no es un archivo .off, todo archivo .off debe comenzar con la línea OFF");
@@ -165,7 +165,7 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
     var it1 = new Array(2), it2 = new Array(2);     //Intervalos de T1 y T2
     var T1 = new PlaneWithPoints3D(A1, B1, C1);     //Triangulos T1 y T2
     var T2 = new PlaneWithPoints3D(A2, B2, C2);
-
+    
     //Vertices de T1
     vt1[0] = new Vector3Dorigin(A1);
     vt1[1] = new Vector3Dorigin(B1);
@@ -593,19 +593,125 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
 
 //Buscar un vertice en el objecto. Si el vertice esta en el objecto, retorna
 //la posicion, si no, inserta este y retorna la posicion
-Object.prototype.vertice = function(v){
+Object.prototype.estaVertice = function (v) {
     var i = 0;
     var band = false;
-    while(i<this.NV && !band){
-        if(this.V[i].esIgual(v)){
+    while (i < this.NV && !band) {
+        if (this.V[i].esIgual(v)) {
             band = true;
-        }else{
+        } else {
             i++;
         }
     }
-    if(!band){
+    if (!band) {
         this.V.push(v);
         this.NV++;
     }
     return i;
-}
+};
+
+//Insertar una nueva cara en el objecto. Si el vertice no existe, los inserta tambien.
+Object.prototype.nuevaCara = function (f) {
+    var i, pos;
+    var newFace = new Array();
+    var p = new PlaneWithPoints3D(f[0], f[1], f[2]);
+    var n = p.unitNormal();
+    newFace.push(f.length);
+    for (i = 0; i < f.length; i++) {
+        pos = this.estaVertice(f[i]);
+        newFace.push(pos);
+    }
+    this.F.push(newFace);
+    this.N.push(n);
+    this.NF++;
+    return (this.F.length - 1);
+};
+
+//Rotar todos los verticas de un objecto a lo largo de un eje
+//Entrada;
+//  -angDeg: Angulo en grados
+//  -axis:  eje en rotacion
+Object.prototype.rotar = function (angDeg, axis) {
+    console.log(angDeg + " " + axis);
+    var i;
+    var angle = (angDeg * Math.PI) / 180;
+    console.log(angle);
+    switch (axis) {
+        case 'x':
+        case 'X':
+            console.log(this.N);
+            for (i = 0; i < this.NV; i++) {
+                this.V[i].rotateOnX(angle);
+            }
+            break;
+        case 'y':
+        case 'Y':
+            console.log("Entro en Y");
+            for (i = 0; i < this.NV; i++) {
+                this.V[i].rotateOnY(angle);
+            }
+            break;
+        case 'z':
+        case 'Z':
+            console.log("Entro en Z");
+            for (i = 0; i < this.NV; i++) {
+                this.V[i].rotateOnZ(angle);
+            }
+            break;
+    }
+    this.calcularVectoresNormales();
+};
+
+//Transladar todos los vertices de un objecto
+//Entrada:
+//  -tx: Translacion en X
+//  -ty: Translacion en Y
+//  -tz: Translacion en Z
+Object.prototype.transladar = function (tx, ty, tz) {
+    var i;
+    for (i = 0; i < this.NV; i++) {
+        this.V[i].translate(tx, ty, tz);
+    }
+};
+
+//Escalar todos los vertices de un objecto
+//Entrada:
+//  -sx: Escalar X
+//  -sy: Escalar Y
+//  -sz: Escalar Z
+Object.prototype.transladar = function (sx, sy, sz) {
+    var i;
+    for (i = 0; i < this.NV; i++) {
+        this.V[i].scale(sx, sy, sz);
+    }
+};
+
+//Colision entre dos objectos
+Object.prototype.colision = function (obj) {
+    var i, j;
+    var band = false;
+    var indexVector1, indexVector2, indexVector3;
+    var objIndexVector1, objIndexVector2, objIndexVector3;
+
+    for (i = 0; i < this.NF && !band; i++) {
+        for (j = 0; j < obj.NF && !band; j++) {
+            indexVector1 = this.F[i][1];      
+            indexVector2 = this.F[i][2];
+            indexVector3 = this.F[i][3];
+            objIndexVector1 = obj.F[j][1];
+            objIndexVector2 = obj.F[j][2];
+            objIndexVector3 = obj.F[j][3];
+            band = this.trianguloEnTriangulo(this.V[indexVector1], this.V[indexVector2], this.V[indexVector3], obj.V[objIndexVector1], obj.V[objIndexVector2], obj.V[objIndexVector3]);
+        }
+    }
+    return band;
+};
+
+//Convertir las caras de un objecto a triangulos
+Object.prototype.convertirAtriangulos = function(){
+    var i, j, final;
+    var newFace = new Array();
+    var n;
+    
+    final = this.NF;
+};
