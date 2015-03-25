@@ -30,9 +30,8 @@ function ObjectCopy(obj) {
 function ObjectFile(filename, esRGB) {
     var lector = new FileReader();
     lector.onload = function (e) {
-        var contenido = e.target.result;
+        var contenido = e.target.result;      
         contenido = contenido.split("\n");
-
         if (contenido[0] === "OFF") {
             var vertices = parseInt(contenido[1].split(" ")[0]);
             var caras = parseInt(contenido[1].split(" ")[1]);
@@ -165,7 +164,7 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
     var it1 = new Array(2), it2 = new Array(2);     //Intervalos de T1 y T2
     var T1 = new PlaneWithPoints3D(A1, B1, C1);     //Triangulos T1 y T2
     var T2 = new PlaneWithPoints3D(A2, B2, C2);
-    
+
     //Vertices de T1
     vt1[0] = new Vector3Dorigin(A1);
     vt1[1] = new Vector3Dorigin(B1);
@@ -695,7 +694,7 @@ Object.prototype.colision = function (obj) {
 
     for (i = 0; i < this.NF && !band; i++) {
         for (j = 0; j < obj.NF && !band; j++) {
-            indexVector1 = this.F[i][1];      
+            indexVector1 = this.F[i][1];
             indexVector2 = this.F[i][2];
             indexVector3 = this.F[i][3];
             objIndexVector1 = obj.F[j][1];
@@ -708,10 +707,24 @@ Object.prototype.colision = function (obj) {
 };
 
 //Convertir las caras de un objecto a triangulos
-Object.prototype.convertirAtriangulos = function(){
+Object.prototype.convertirAtriangulos = function () {
     var i, j, final;
     var newFace = new Array();
     var n;
-    
+
     final = this.NF;
+    for (i = 0; i < final; i++) {
+        if (this.F[i][0] > 3) {
+            n = this.N[i];
+            for (j = 3; j < this.F[i][0]; j++) {
+                newFace[1] = this.F[i][1];
+                newFace[2] = this.F[i][j];
+                newFace[3] = this.F[i][j + 1];
+                this.F.push(newFace);
+                this.N.push(n);
+                this.NF++;
+            }
+            this.F[i][0] = 3;   //La cara actual ahora tiene 3 vertices
+        }
+    }
 };

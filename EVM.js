@@ -1,9 +1,113 @@
 /*
  /* 
- * Libreria para la representacion de objetos volumetricos usando el modelo EVM
+ * Libreria para la representacion de objetos volumetricos usando el modelo EVM.
+ * Dependencias: Point3D.js, Line3D.js, Object.js
+ * 
  * Autor: Harold N. Montenegro H.
  */
 
+//Atributos
+var EVM_Order = {XYZ: 1, XZY: 2, YXZ: 3, YZX: 4, ZXY: 5, ZYX: 6};
+var Dimension = {D1: 1, D2: 2, D3: 3};
+
+var NEV;    //Numero de vertices extremos
+var v;      //Vectores de vertices extremos
+var ABC;    //ABC_sort
+var dim;    //Dimensión del EVM
+
+//Constructores
+function EVM(ord, d) {
+    this.NEV = 0;
+    this.v = 0;
+    this.ABC = ord;
+    this.dim = d;
+}
+
+function EVMWithExVert(exVert, ord, d) {
+    var nuevoEVM = new EVM(ord, d);
+    nuevoEVM.v = exVert;
+    nuevoEVM.ABC = ord;
+    nuevoEVM.dim = d;
+    nuevoEVM.NEV = exVert.length;
+    if (nuevoEVM.NEV > 1) {
+//        nuevoEVM.order(nuevoEVM.ABC);         ???PORQUE SE LE ASIGNA ABC SI NEV ES MAYOR A 1??? 
+    }
+    return nuevoEVM;
+}
+
+function EVMCopy(e) {
+    var nuevoEVM = new EVM(e.ABC, e.dim);
+    nuevoEVM.NEV = e.NEV;
+    nuevoEVM.v = e.v;
+    return nuevoEVM;
+}
+
+function EVMFile(filename) {
+    var lector = new FileReader();
+    
+    var i, n, aux, order, vertex;
+    
+    lector.onload = function (e) {
+        var contenido = e.target.result;
+
+        contenido = contenido.split("\n");
+        console.log(contenido[0]);
+//        if (contenido[0] === "OFF") {
+//            var vertices = parseInt(contenido[1].split(" ")[0]);
+//            var caras = parseInt(contenido[1].split(" ")[1]);
+//            var bordes = parseInt(contenido[1].split(" ")[2]);
+//
+//            var object = new Object(vertices, caras, bordes);
+//            var punto;
+//            var indexVertice;
+//            for (var i = 0; i < vertices; i++) {
+//                punto = new Point3D(parseInt(contenido[i + 2].split(" ")[0]), parseInt(contenido[i + 2].split(" ")[1]), parseInt(contenido[i + 2].split(" ")[2]));
+//                object.V[i] = punto;
+//            }
+//
+//            for (var i = 0; i < caras; i++) {
+//                indexVertice = parseInt(contenido[(vertices + 2) + i].split(" ")[0]);
+//                for (var j = 1; j <= indexVertice; j++) {
+//                    object.F[i][j] = parseInt(contenido[(vertices + 2) + i].split(" ")[j]);
+//                }
+//            }
+//            object.calcularVectoresNormales();
+//            console.log(object);
+//            return object;
+//        } else {
+//            alert("Esto no es un archivo .off, todo archivo .off debe comenzar con la lÃ­nea OFF");
+//            return null;
+//        }
+    };
+    lector.readAsText(filename[0]);
+//    console.log(lector.target);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
 /******************Inicializacion de libreria WebGL****************************/
 
 /**Inicializar WebGL en canvas**/
@@ -494,6 +598,22 @@ function pruebas() {
     } else {
         console.log("NO colisionan");
     }
+
+    console.log("PRUEBAS DEL EVM");
+    var evm1 = new EVM("XYZ", 3);
+    console.log(evm1);
+    var arrayVert = new Array();
+    arrayVert[0] = puntoAA;
+    arrayVert[1] = puntoBB;
+    arrayVert[2] = puntoCC;
+
+    var evm2 = new EVMWithExVert(arrayVert, "XYZ", 3);
+    console.log(evm2);
+
+    var evm3 = new EVMCopy(evm2);
+    console.log(evm3);
+
+
 }
 
 
