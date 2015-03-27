@@ -15,6 +15,8 @@ var v;      //Vectores de vertices extremos
 var ABC;    //ABC_sort
 var dim;    //Dimensión del EVM
 
+var EVMFileOutput;
+
 //Constructores
 function EVM(ord, d) {
     this.NEV = 0;
@@ -44,48 +46,206 @@ function EVMCopy(e) {
 
 function EVMFile(filename) {
     var lector = new FileReader();
-    
-    var i, n, aux, order, vertex;
-    
+
+    var i, n, order, vertex, verticesArray;
+
+    var exVert = new Array();
+    var ord;
+    var d;
+
     lector.onload = function (e) {
         var contenido = e.target.result;
-
+        d = Dimension.D3;
         contenido = contenido.split("\n");
-        console.log(contenido[0]);
-//        if (contenido[0] === "OFF") {
-//            var vertices = parseInt(contenido[1].split(" ")[0]);
-//            var caras = parseInt(contenido[1].split(" ")[1]);
-//            var bordes = parseInt(contenido[1].split(" ")[2]);
-//
-//            var object = new Object(vertices, caras, bordes);
-//            var punto;
-//            var indexVertice;
-//            for (var i = 0; i < vertices; i++) {
-//                punto = new Point3D(parseInt(contenido[i + 2].split(" ")[0]), parseInt(contenido[i + 2].split(" ")[1]), parseInt(contenido[i + 2].split(" ")[2]));
-//                object.V[i] = punto;
-//            }
-//
-//            for (var i = 0; i < caras; i++) {
-//                indexVertice = parseInt(contenido[(vertices + 2) + i].split(" ")[0]);
-//                for (var j = 1; j <= indexVertice; j++) {
-//                    object.F[i][j] = parseInt(contenido[(vertices + 2) + i].split(" ")[j]);
-//                }
-//            }
-//            object.calcularVectoresNormales();
-//            console.log(object);
-//            return object;
-//        } else {
-//            alert("Esto no es un archivo .off, todo archivo .off debe comenzar con la lÃ­nea OFF");
-//            return null;
-//        }
+        n = contenido[0].split(" ")[1];
+        order = contenido[0].split(" ")[3];
+
+        if (order === "XYZ" || order === "xyz") {
+            ord = EVM_Order.XYZ;
+        } else if (order === "XZY" || order === "xzy") {
+            ord = EVM_Order.XZY;
+        } else if (order === "YXZ" || order === "yxz") {
+            ord = EVM_Order.YXZ;
+        } else if (order === "YZX" || order === "yzx") {
+            ord = EVM_Order.YZX;
+        } else if (order === "ZXY" || order === "ZXY") {
+            ord = EVM_Order.ZXY;
+        } else if (order === "ZYX" || order === "zyx") {
+            ord = EVM_Order.ZYX;
+        } else {
+            ord = EVM_Order.XYZ;
+        }
+        for (i = 0; i < n; i++) {
+            verticesArray = contenido[i + 2].split(" ");
+            vertex = new Point3D(parseFloat(verticesArray[0]), parseFloat(verticesArray[1]), parseFloat(verticesArray[2]));
+            exVert.push(vertex);
+        }
+        this.EVMFileOutput = new EVMWithExVert(exVert, ord, d);
+        this.EVMFileOutput.order(EVM_Order.YXZ);
+        for (i = 0; i < n; i++) {
+            console.log(this.EVMFileOutput.v[i]);
+        }
+
     };
     lector.readAsText(filename[0]);
-//    console.log(lector.target);
+
 }
 
+//Metodos
+EVM.prototype.putExtremeVertex = function (p) {
+    this.v.push(p);
+    this.NEV++;
+};
 
+EVM.prototype.order = function (ord) {
+    this.ABC = ord;
+    switch (ord) {
+        case EVM_Order.XYZ:
+            this.v.sort(function (a, b) {
+                return(a.X < b.X || (a.X === b.X && (a.Y < b.Y || (a.Y === b.Y && a.Z < b.Z))));
+            });
+            break;
 
+        case EVM_Order.XZY:
+            this.v.sort(function (a, b) {
+                return(a.X < b.X || (a.X === b.X && (a.Z < b.Z || (a.Z === b.Z && a.Y < b.Y))));
+            });
+            break;
 
+        case EVM_Order.YXZ:
+            this.v.sort(function (a, b) {
+                return(a.Y < b.Y || (a.Y === b.Y && (a.X < b.X || (a.X === b.X && a.Z < b.Z))));
+            });
+            break;
+
+        case EVM_Order.YZX:
+            this.v.sort(function (a, b) {
+                return(a.Y < b.Y || (a.Y === b.Y && (a.Z < b.Z || (a.Z === b.Z && a.X < b.X))));
+            });
+            break;
+
+        case EVM_Order.ZXY:
+            this.v.sort(function (a, b) {
+                return(a.Z < b.Z || (a.Z === b.Z && (a.X < b.X || (a.X === b.X && a.Y < b.Y))));
+            });
+            break;
+
+        case EVM_Order.ZYX:
+            this.v.sort(function (a, b) {
+                return(a.Z < b.Z || (a.Z === b.Z && (a.Y < b.Y || (a.Y === b.Y && a.X < b.X))));
+            });
+            break;
+    }
+};
+
+//Colision 1D
+EVM.prototype.collision1D = function (B) {
+    var C = new EVM(B.ABC, this.dim);
+    var ia = 0, ib = 0;
+    var aOrd = this.ABC;
+
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
+
+    while (C.NEV === 0 && ia < this.NEV && ib < B.NEV) {
+        switch (this.ABC) {
+            case EVM_Order.YZX:
+            case EVM_Order.ZYX:
+                if (this.v[ia].X > B.v[ib].X) {
+                    if (ia % 2 === 1) {
+                        if (this.v[ia - 1].X < B.v[ib].X)
+                            C.putExtremeVertex(B.v[ib]);
+                        ib++;
+                    }
+                }
+                else
+                {
+                    if (this.v[ia].X < B.v[ib].X)
+                    {
+                        // Search if A in line ending in B
+                        if (ib % 2 === 1)
+                            if (B.v[ib - 1].X < this.v[ia].X)
+                                C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    }
+                    else
+                    {
+                        // A = B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+            case EVM_Order.XZY:
+            case EVM_Order.ZXY:
+                if (this.v[ia].Y > B.v[ib].Y)
+                {
+                    // Search if B in line ending in A
+                    if (ia % 2 === 1)
+                        if (this.v[ia - 1].Y < B.v[ib].Y)
+                            C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                }
+                else
+                {
+                    if (this.v[ia].Y < B.v[ib].Y)
+                    {
+                        // Search if A in line ending in B
+                        if (ib % 2 === 1)
+                            if (B.v[ib - 1].Y < this.v[ia].Y)
+                                C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    }
+                    else
+                    {
+                        // A = B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+            case EVM_Order.XYZ:
+            case EVM_Order.YXZ:
+                if (this.v[ia].Z > B.v[ib].Z)
+                {
+                    // Search if B in line ending in A
+                    if (ia % 2 === 1)
+                        if (this.v[ia - 1].Z < B.v[ib].Z)
+                            C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                }
+                else
+                {
+                    if (this.v[ia].Z < B.v[ib].Z)
+                    {
+                        // Search if A in line ending in B
+                        if (ib % 2 === 1)
+                            if (B.v[ib - 1].Z < this.v[ia].Z)
+                                C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    }
+                    else
+                    {
+                        // A = B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+        }
+    }
+
+    // Return A to its original order
+    if (this.ABC !== aOrd)
+        order(aOrd);
+    return(C);
+};
 
 
 
@@ -610,12 +770,15 @@ function pruebas() {
     var evm2 = new EVMWithExVert(arrayVert, "XYZ", 3);
     console.log(evm2);
 
-    var evm3 = new EVMCopy(evm2);
-    console.log(evm3);
+    console.log("EVM POR ARCHIVO");
+
 
 
 }
 
+function procesarEVM() {
+    console.log(this.EVMFileOutput);
+}
 
 /**Iniciar WebGL apuntando al canvas del HTML**/
 function webGLStart() {
