@@ -17,10 +17,11 @@ var dim;    //Dimensión del EVM
 
 var EVMFileOutput;
 
+
 //Constructores
 function EVM(ord, d) {
     this.NEV = 0;
-    this.v = 0;
+    this.v = new Array();
     this.ABC = ord;
     this.dim = d;
 }
@@ -32,7 +33,7 @@ function EVMWithExVert(exVert, ord, d) {
     nuevoEVM.dim = d;
     nuevoEVM.NEV = exVert.length;
     if (nuevoEVM.NEV > 1) {
-//        nuevoEVM.order(nuevoEVM.ABC);         ???PORQUE SE LE ASIGNA ABC SI NEV ES MAYOR A 1??? 
+        nuevoEVM.order(nuevoEVM.ABC);
     }
     return nuevoEVM;
 }
@@ -59,7 +60,6 @@ function EVMFile(filename) {
         contenido = contenido.split("\n");
         n = contenido[0].split(" ")[1];
         order = contenido[0].split(" ")[3];
-
         if (order === "XYZ" || order === "xyz") {
             ord = EVM_Order.XYZ;
         } else if (order === "XZY" || order === "xzy") {
@@ -81,17 +81,16 @@ function EVMFile(filename) {
             exVert.push(vertex);
         }
         this.EVMFileOutput = new EVMWithExVert(exVert, ord, d);
-        this.EVMFileOutput.order(EVM_Order.YXZ);
-        for (i = 0; i < n; i++) {
-            console.log(this.EVMFileOutput.v[i]);
-        }
 
+        /***********PRUEBA CON ARCHIVOS********************/
+        var B = new EVMCopy(this.EVMFileOutput);
+        var Cresult = this.EVMFileOutput.collision(B);
     };
     lector.readAsText(filename[0]);
 
 }
 
-//Metodos
+//Métodos
 EVM.prototype.putExtremeVertex = function (p) {
     this.v.push(p);
     this.NEV++;
@@ -138,7 +137,7 @@ EVM.prototype.order = function (ord) {
     }
 };
 
-//Colision 1D
+//Colisión 1D
 EVM.prototype.collision1D = function (B) {
     var C = new EVM(B.ABC, this.dim);
     var ia = 0, ib = 0;
@@ -247,14 +246,704 @@ EVM.prototype.collision1D = function (B) {
     return(C);
 };
 
+//Colisión
+EVM.prototype.collision = function (B) {
+    var C = new EVM(B.ABC, this.dim);
+    var sA = new EVM(B.ABC, Dimension.D2);
+    var sB = new EVM(B.ABC, Dimension.D2);
+    var sCcurr = new EVM(B.ABC, Dimension.D2);
+    var sCprev = new EVM(B.ABC, Dimension.D2);
+    var plv = new EVM(B.ABC, Dimension.D2);
+    fromA = false, fromB = false;
+    coord = 0;
+    var aOrd = this.ABC;
 
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
 
+    if (this.dim === 1) {
+        console.log("ENTRO AQUI");
+        C = this.collision1D(B);
+    } else {
+        if (this.dim === Dimension.D2) {
+            sA.dim = Dimension.D1;
+            sB.dim = Dimension.D1;
+            sCcurr.dim = Dimension.D1;
+            sCprev.dim = Dimension.D1;
+            plv.dim = Dimension.D1;
+        }
+        ia = 0;
+        ib = 0;
+        this.nextObject(B, ia, ib);
+        this.improve(B, 0, plv, sA, sB, C, sCprev, sCcurr);
+        while (C.NEV === 0 && ia < this.NEV && ib < B.NEV) {
+            console.log(C.NEV + " " + this.NEV + "   " + B.NEV);
+            console.log(B);
+            if (fromA) {
+                plv = this.readPlv(true);
+                sA = sA.getSection(plv);
+            }
+            if (fromB) {
+                plv = B.readPlv(false);
+                sB = sB.getSection(plv);
+            }
+            sCprev = sCcurr;
+            console.log(sCcurr);
+            sCcurr = sA.collision(sB);
 
+            plv = sCprev.getPlv(sCcurr);
+            plv.setCoordinate(coord);
+            C.putPlv(plv);
 
+            this.nextObject(B, ia, ib);
+            console.log("PASO DE AQUI444");
+        }
+    }
 
+    if (this.ABC !== aOrd)
+        this.order(aOrd);
 
+    return (C);
+};
 
+EVM.prototype.nextObject = function (B, ia, ib) {
+    var inv = -1.7976931348623157e+308;
+    var coorda = inv, coordb = inv;
+    if (this.dim === Dimension.D3) {
+        console.log(this.ABC);
+        switch (this.ABC) {
+            case EVM_Order.XYZ:
+            case EVM_Order.XZY:
+                if (this.NEV > 0 && ia < this.NEV)
+                    coorda = this.v[ia].X;
+                if (B.NEV > 0 && ib < B.NEV)
+                    coordb = B.v[ib].X;
+                break;
 
+            case EVM_Order.YXZ:
+            case EVM_Order.YZX:
+                if (this.NEV > 0 && ia < this.NEV)
+                    coorda = this.v[ia].Y;
+                if (B.NEV > 0 && ib < B.NEV)
+                    coordb = B.v[ib].Y;
+                break;
+
+            case EVM_Order.ZXY:
+            case EVM_Order.ZYX:
+                if (this.NEV > 0 && ia < this.NEV)
+                    coorda = this.v[ia].Z;
+                if (B.NEV > 0 && ib < B.NEV)
+                    coordb = B.v[ib].Z;
+                break;
+        }
+    }
+    else {
+        switch (this.ABC) {
+            case EVM_Order.XYZ:
+            case EVM_Order.ZXY:
+                if (this.NEV > 0 && ia < this.NEV)
+                    coorda = this.v[ia].Y;
+                if (B.NEV > 0 && ib < B.NEV)
+                    coordb = B.v[ib].Y;
+                break;
+
+            case EVM_Order.XZY:
+            case EVM_Order.YZX:
+                if (this.NEV > 0 && ia < this.NEV)
+                    coorda = this.v[ia].Z;
+                if (B.NEV > 0 && ib < B.NEV)
+                    coordb = B.v[ib].Z;
+                break;
+
+            case EVM_Order.YXZ:
+            case EVM_Order.ZXY:
+                if (this.NEV > 0 && ia < this.NEV)
+                    coorda = this.v[ia].X;
+                if (B.NEV > 0 && ib < B.NEV)
+                    coordb = B.v[ib].X;
+                break;
+        }
+    }
+    console.log("coorda  " + coorda + "coordb  " + coordb);
+    if (coorda !== inv && coordb !== inv) {
+        if (coorda < coordb) {
+            fromA = true;
+            fromB = false;
+            coord = coorda;
+        }
+        else {
+            if (coorda > coordb) {
+                fromA = false;
+                fromB = true;
+                coord = coordb;
+            }
+            else {
+                fromA = true;
+                fromB = true;
+                coord = coorda;
+            }
+        }
+    } else {
+
+        if (coorda !== inv)
+        {
+
+            fromA = true;
+            fromB = false;
+            coord = coorda;
+        }
+        else
+        {
+            if (coordb !== inv)
+            {
+                fromA = false;
+                fromB = true;
+                coord = coordb;
+            }
+            else
+            {
+                fromA = false;
+                fromB = false;
+            }
+        }
+    }
+};
+
+EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
+    switch (op) {
+        case 0: //Collisión
+        case 1: //Intersección
+            if (!fromA || !fromB) {
+                if (fromA) {   //fromA = this.v
+                    while (ia < this.NEV && !fromB) {
+                        plv = readPlv(true);
+                        sA = sA.getSection(plv);
+                        this.nextObject(B, ia, ib);
+                    }
+                } else {
+                    while (ib < B.NEV && !fromA) {
+                        plv = B.readPlv(false);
+                        sB = sB.getSection(plv);
+                        this.nextObject(B, ia, ib);
+                    }
+                }
+            }
+            break;
+        case 2: // MergeXor
+            // Optimize preprocess for MergeXor
+            break;
+        case 3: // Difference
+            // Optimize preprocess for Difference
+            if (fromA)
+            {
+                while (ia < this.NEV && !fromB)
+                {
+                    plv = this.readPlv(true);
+                    sA = sA.getSection(plv);
+                    sCprev = sCcurr;
+                    sCcurr = sA;
+                    //plv = sCprev.getPlv(sCcurr);
+                    //plv.setCoordinate(coord);
+                    C.putPlv(plv);
+                    this.nextObject(B, ia, ib);
+                }
+            }
+            else
+            {
+                if (fromB)
+                {
+                    while (ib < B.NEV && !fromA)
+                    {
+                        plv = B.readPlv(false);
+                        sB = sB.getSection(plv);
+                        this.nextObject(B, ia, ib);
+                    }
+                }
+            }
+            break;
+        case 4: // Union
+            // Optimize preprocess for Union
+            if (fromA)
+            {
+                while (ia < this.NEV && !fromB)
+                {
+                    plv = readPlv(true);
+                    sA = sA.getSection(plv);
+                    sCprev = sCcurr;
+                    sCcurr = sA;
+                    C.putPlv(plv);
+                    this.nextObject(B, ia, ib);
+                }
+            }
+            else
+            {
+                if (fromB)
+                {
+                    while (ib < B.NEV && !fromA)
+                    {
+                        plv = B.readPlv(false);
+                        sB = sB.getSection(plv);
+                        sCprev = sCcurr;
+                        sCcurr = sB;
+                        C.putPlv(plv);
+                        this.nextObject(B, ia, ib);
+                    }
+                }
+            }
+            break;
+    }
+};
+
+//ia es el primer vertice para leer
+// dim es la dimensión: 3 or 2
+//dim = 3: extraer un plano desde un objecto
+//dim = 2: extraer una linea desde un plano
+EVM.prototype.readPlv = function (esA) {
+    var plv = new EVM(this.ABC, Dimension.D3);
+    var fixedCoord;
+    var valor;
+
+    if (esA) {
+        valor = ia;
+    } else {
+        valor = ib;
+    }
+
+    plv.ABC = this.ABC;
+    switch (dim) {
+        case Dimension.D3:
+            plv.dim = Dimension.D2;
+            switch (this.ABC) {
+                case EVM_Order.XYZ:
+                case EVM_Order.XZY:
+                    fixedCoord = this.v[valor].X;
+                    while (valor < this.NEV && this.v[valor].X === fixedCoord) {
+                        plv.putExtremeVertex(this.v[valor]);
+                        valor++;
+                    }
+                    break;
+
+                case EVM_Order.YXZ:
+                case EVM_Order.YZX:
+                    fixedCoord = this.v[valor].Y;
+                    while (valor < this.NEV && this.v[valor].Y === fixedCoord) {
+                        plv.putExtremeVertex(this.v[valor]);
+                        valor++;
+                    }
+                    break;
+
+                case EVM_Order.ZXY:
+                case EVM_Order.ZYX:
+                    fixedCoord = this.v[valor].Z;
+                    while (valor < this.NEV && this.v[valor].Z === fixedCoord) {
+                        plv.putExtremeVertex(this.v[valor]);
+                        valor++;
+                    }
+                    break;
+            }
+            break;
+
+        case Dimension.D2:
+            plv.dim = Dimension.D1;
+            switch (ABC)
+            {
+                case EVM_Order.YXZ:
+                case EVM_Order.ZXY:
+                    fixedCoord = this.v[valor].X;
+                    while (valor < this.NEV && this.v[valor].X === fixedCoord)
+                    {
+                        plv.putExtremeVertex(this.v[valor]);
+                        valor++;
+                    }
+                    break;
+                case EVM_Order.XYZ:
+                case EVM_Order.ZYX:
+                    fixedCoord = this.v[valor].Y;
+                    while (valor < this.NEV && this.v[valor].Y === fixedCoord)
+                    {
+                        plv.putExtremeVertex(this.v[valor]);
+                        valor++;
+                    }
+                    break;
+                case EVM_Order.XZY:
+                case EVM_Order.YZX:
+                    fixedCoord = this.v[valor].Z;
+                    while (valor < this.NEV && this.v[valor].Z === fixedCoord)
+                    {
+                        plv.putExtremeVertex(this.v[valor]);
+                        valor++;
+                    }
+                    break;
+            }
+            break;
+    }
+
+    if (esA) {
+        ia = valor;
+    } else {
+        ib = valor;
+    }
+    return (plv);
+};
+
+EVM.prototype.getPlv = function (S_i)
+{
+    var plv_i = new EVM(this.ABC, this.dim);
+    if (this.dim === Dimension.D2)
+    {
+        plv_i = this.mergeXOR2D(S_i);
+    }
+    else
+    {
+        plv_i = this.mergeXOR1D(S_i);
+    }
+    return(plv_i);
+};
+
+EVM.prototype.getSection = function (plv_i) {
+    var S_i = new EVM(this.ABC, this.dim);
+    if (this.dim === Dimension.D2) {
+        S_i = this.mergeXOR2D(plv_i);
+    } else {
+        S_i = this.mergeXOR1D(plv_i);
+    }
+    return (S_i);
+};
+
+EVM.prototype.mergeXOR1D = function (B)
+{
+    var C = new EVM(B.ABC, this.dim);
+    var ia = 0, ib = 0, aob;
+    var aOrd = this.ABC;
+
+    // A, B and C share order
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
+
+    while (ia < this.NEV && ib < B.NEV)
+    {
+        switch (this.ABC)
+        {
+            case EVM_Order.XYZ:
+            case EVM_Order.YXZ:
+                if (this.v[ia].Z < B.v[ib].Z)
+                {
+                    aob = 1;
+                }
+                else
+                {
+                    if (this.v[ia].Z > B.v[ib].Z)
+                        aob = 2;
+                    else
+                        aob = 3;
+                }
+                break;
+            case EVM_Order.XZY:
+            case EVM_Order.ZXY:
+                if (this.v[ia].Y < B.v[ib].Y)
+                {
+                    aob = 1;
+                }
+                else
+                {
+                    if (this.v[ia].Y > B.v[ib].Y)
+                        aob = 2;
+                    else
+                        aob = 3;
+                }
+                break;
+            case EVM_Order.YZX:
+            case EVM_Order.ZYX:
+                if (this.v[ia].X < B.v[ib].X)
+                {
+                    aob = 1;
+                }
+                else
+                {
+                    if (this.v[ia].X > B.v[ib].X)
+                        aob = 2;
+                    else
+                        aob = 3;
+                }
+                break;
+        }
+        switch (aob)
+        {
+            case 1:
+                C.putExtremeVertex(this.v[ia]);
+                ia++;
+                break;
+            case 2:
+                C.putExtremeVertex(B.v[ib]);
+                ib++;
+                break;
+            case 3:
+                ia++;
+                ib++;
+                break;
+        }
+    }
+    while (ia < this.NEV)
+    {
+        C.putExtremeVertex(this.v[ia]);
+        ia++;
+    }
+    while (ib < B.NEV)
+    {
+        C.putExtremeVertex(B.v[ib]);
+        ib++;
+    }
+
+    // Return A to its original order
+    if (this.ABC !== aOrd)
+        this.order(aOrd);
+
+    return(C);
+};
+
+EVM.prototype.mergeXOR2D = function (B) {
+    var C = new EVM(B.ABC, this.dim);
+    var ia = 0, ib = 0, aob;
+    var aOrd = this.ABC;
+
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
+
+    while (ia < this.NEV && ib < B.NEV)
+    {
+        switch (this.ABC)
+        {
+            case EVM_Order.XYZ:
+                if (this.v[ia].Y < B.v[ib].Y)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].Y > B.v[ib].Y)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].Z === B.v[ib].Z)
+                            aob = 3;
+                        else
+                            aob = 4;
+                    }
+                }
+                break;
+            case EVM_Order.XZY:
+                if (this.v[ia].Z < B.v[ib].Z)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].Z > B.v[ib].Z)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].Y === B.v[ib].Y)
+                            aob = 3;
+                        else
+                            aob = 4;
+                    }
+                }
+                break;
+            case EVM_Order.YXZ:
+                if (this.v[ia].X < B.v[ib].X)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].X > B.v[ib].X)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].Z === B.v[ib].Z)
+                            aob = 3;
+                        else
+                            aob = 4;
+                    }
+                }
+                break;
+            case EVM_Order.YZX:
+                if (this.v[ia].Z < B.v[ib].Z)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].Z > B.v[ib].Z)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].X === B.v[ib].X)
+                            aob = 3;
+                        else
+                            aob = 4;
+                    }
+                }
+                break;
+            case EVM_Order.ZXY: // ZXY
+                if (this.v[ia].X < B.v[ib].X)
+                    aob = 1;
+                else
+                {
+                    if (v[ia].X > B.v[ib].X)
+                        aob = 2;
+                    else
+                    {
+                        if (v[ia].Y === B.v[ib].Y)
+                            aob = 3;
+                        else
+                            aob = 4;
+                    }
+                }
+                break;
+            case EVM_Order.ZYX: // ZYX
+                if (v[ia].Y < B.v[ib].Y)
+                    aob = 1;
+                else
+                {
+                    if (v[ia].Y > B.v[ib].Y)
+                        aob = 2;
+                    else
+                    {
+                        if (v[ia].X === B.v[ib].X)
+                            aob = 3;
+                        else
+                            aob = 4;
+                    }
+                }
+                break;
+        }
+        switch (aob)
+        {
+            case 1:
+                C.putExtremeVertex(this.v[ia]);
+                ia++;
+                break;
+            case 2:
+                C.putExtremeVertex(B.v[ib]);
+                ib++;
+                break;
+            case 3:
+                ia++;
+                ib++;
+                break;
+            case 4:
+                switch (this.ABC)
+                {
+                    case EVM_Order.YZX:
+                    case EVM_Order.ZYX:
+                        if (this.v[ia].X < B.v[ib].X)
+                        {
+                            C.putExtremeVertex(this.v[ia]);
+                            ia++;
+                        }
+                        else
+                        {
+                            C.putExtremeVertex(B.v[ib]);
+                            ib++;
+                        }
+                        break;
+                    case EVM_Order.XZY:
+                    case EVM_Order.ZXY:
+                        if (this.v[ia].Y < B.v[ib].Y)
+                        {
+                            C.putExtremeVertex(this.v[ia]);
+                            ia++;
+                        }
+                        else
+                        {
+                            C.putExtremeVertex(B.v[ib]);
+                            ib++;
+                        }
+                        break;
+                    case EVM_Order.XYZ:
+                    case EVM_Order.YXZ:
+                        if (this.v[ia].Z < B.v[ib].Z)
+                        {
+                            C.putExtremeVertex(this.v[ia]);
+                            ia++;
+                        }
+                        else
+                        {
+                            C.putExtremeVertex(B.v[ib]);
+                            ib++;
+                        }
+                        break;
+                }
+                break;
+        }
+    }
+    while (ia < this.NEV)
+    {
+        C.putExtremeVertex(this.v[ia]);
+        ia++;
+    }
+    while (ib < B.NEV)
+    {
+        C.putExtremeVertex(B.v[ib]);
+        ib++;
+    }
+
+    // Return A to its original order
+    if (this.ABC !== aOrd)
+        order(aOrd);
+
+    return(C);
+};
+
+EVM.prototype.setCoordinate = function (coord) {
+    var i;
+    switch (this.dim) {
+        case Dimension.D2:
+            switch (this.ABC) {
+                case EVM_Order.XYZ:
+                case EVM_Order.XZY:
+                    for (i = 0; i < this.NEV; i++) {
+                        this.v[i].X = coord;
+                    }
+                    break;
+
+                case EVM_Order.YXZ:
+                case EVM_Order.YZX:
+                    for (i = 0; i < this.NEV; i++) {
+                        this.v[i].Y = coord;
+                    }
+                    break;
+
+                case EVM_Order.ZXY:
+                case EVM_Order.ZYX:
+                    for (i = 0; i < this.NEV; i++) {
+                        this.v[i].Z = coord;
+                    }
+                    break;
+            }
+            break;
+
+        case Dimension.D1:
+            switch (this.ABC)
+            {
+                case EVM_Order.YXZ:
+                case EVM_Order.ZXY:
+                    for (i = 0; i < this.NEV; i++)
+                        this.v[i].X = coord;
+                    break;
+                case EVM_Order.XYZ:
+                case EVM_Order.ZYX:
+                    for (i = 0; i < this.NEV; i++)
+                        this.v[i].Y = coord;
+                    break;
+                case EVM_Order.XZY:
+                case EVM_Order.YZX:
+                    for (i = 0; i < this.NEV; i++)
+                        this.v[i].Z = coord;
+                    break;
+            }
+            break;
+    }
+};
+
+EVM.prototype.putPlv = function (plv) {
+    for (var i = 0; i < plv.NEV; i++) {
+        this.putExtremeVertex(plv.v[i]);
+    }
+};
 
 
 
@@ -762,22 +1451,11 @@ function pruebas() {
     console.log("PRUEBAS DEL EVM");
     var evm1 = new EVM("XYZ", 3);
     console.log(evm1);
-    var arrayVert = new Array();
-    arrayVert[0] = puntoAA;
-    arrayVert[1] = puntoBB;
-    arrayVert[2] = puntoCC;
-
-    var evm2 = new EVMWithExVert(arrayVert, "XYZ", 3);
-    console.log(evm2);
 
     console.log("EVM POR ARCHIVO");
 
 
 
-}
-
-function procesarEVM() {
-    console.log(this.EVMFileOutput);
 }
 
 /**Iniciar WebGL apuntando al canvas del HTML**/
