@@ -85,6 +85,7 @@ function EVMFile(filename) {
         /***********PRUEBA CON ARCHIVOS********************/
         var B = new EVMCopy(this.EVMFileOutput);
         var Cresult = this.EVMFileOutput.collision(B);
+        console.log(Cresult);
     };
     lector.readAsText(filename[0]);
 
@@ -262,7 +263,7 @@ EVM.prototype.collision = function (B) {
         this.order(B.ABC);
 
     if (this.dim === 1) {
-        console.log("ENTRO AQUI");
+        console.log("ENTRO AQUI al caso base");
         C = this.collision1D(B);
     } else {
         if (this.dim === Dimension.D2) {
@@ -277,8 +278,6 @@ EVM.prototype.collision = function (B) {
         this.nextObject(B, ia, ib);
         this.improve(B, 0, plv, sA, sB, C, sCprev, sCcurr);
         while (C.NEV === 0 && ia < this.NEV && ib < B.NEV) {
-            console.log(C.NEV + " " + this.NEV + "   " + B.NEV);
-            console.log(B);
             if (fromA) {
                 plv = this.readPlv(true);
                 sA = sA.getSection(plv);
@@ -288,7 +287,6 @@ EVM.prototype.collision = function (B) {
                 sB = sB.getSection(plv);
             }
             sCprev = sCcurr;
-            console.log(sCcurr);
             sCcurr = sA.collision(sB);
 
             plv = sCprev.getPlv(sCcurr);
@@ -296,7 +294,6 @@ EVM.prototype.collision = function (B) {
             C.putPlv(plv);
 
             this.nextObject(B, ia, ib);
-            console.log("PASO DE AQUI444");
         }
     }
 
@@ -310,7 +307,6 @@ EVM.prototype.nextObject = function (B, ia, ib) {
     var inv = -1.7976931348623157e+308;
     var coorda = inv, coordb = inv;
     if (this.dim === Dimension.D3) {
-        console.log(this.ABC);
         switch (this.ABC) {
             case EVM_Order.XYZ:
             case EVM_Order.XZY:
@@ -337,10 +333,10 @@ EVM.prototype.nextObject = function (B, ia, ib) {
                 break;
         }
     }
-    else {
+    else {  //Buscando lineas dentro de la coordenada B
         switch (this.ABC) {
             case EVM_Order.XYZ:
-            case EVM_Order.ZXY:
+            case EVM_Order.ZYX:
                 if (this.NEV > 0 && ia < this.NEV)
                     coorda = this.v[ia].Y;
                 if (B.NEV > 0 && ib < B.NEV)
@@ -364,7 +360,6 @@ EVM.prototype.nextObject = function (B, ia, ib) {
                 break;
         }
     }
-    console.log("coorda  " + coorda + "coordb  " + coordb);
     if (coorda !== inv && coordb !== inv) {
         if (coorda < coordb) {
             fromA = true;
@@ -420,7 +415,7 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
                         sA = sA.getSection(plv);
                         this.nextObject(B, ia, ib);
                     }
-                } else {
+                } else {    //fromB = this.v
                     while (ib < B.NEV && !fromA) {
                         plv = B.readPlv(false);
                         sB = sB.getSection(plv);
@@ -442,8 +437,6 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
                     sA = sA.getSection(plv);
                     sCprev = sCcurr;
                     sCcurr = sA;
-                    //plv = sCprev.getPlv(sCcurr);
-                    //plv.setCoordinate(coord);
                     C.putPlv(plv);
                     this.nextObject(B, ia, ib);
                 }
@@ -510,7 +503,7 @@ EVM.prototype.readPlv = function (esA) {
     }
 
     plv.ABC = this.ABC;
-    switch (dim) {
+    switch (this.dim) {
         case Dimension.D3:
             plv.dim = Dimension.D2;
             switch (this.ABC) {
@@ -545,7 +538,7 @@ EVM.prototype.readPlv = function (esA) {
 
         case Dimension.D2:
             plv.dim = Dimension.D1;
-            switch (ABC)
+            switch (this.ABC)
             {
                 case EVM_Order.YXZ:
                 case EVM_Order.ZXY:
