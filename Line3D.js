@@ -6,6 +6,13 @@
 var P1, P2;
 
 //Constructores
+function Line3Dnull(){
+  var pA = new Point3D(0,0,0);
+  var pB = new Point3D(0,0,0);
+  var line = new Line3D(pA, pB);
+  return line;
+}
+
 function Line3D(A, B) {
     this.P1 = new Point3D(A.X, A.Y, A.Z);
     this.P2 = new Point3D(B.X, B.Y, B.Z);
