@@ -83,15 +83,14 @@ function EVMFile(filename) {
         this.EVMFileOutput = new EVMWithExVert(exVert, ord, d);
 
         /***********PRUEBA CON ARCHIVOS********************/
-        var B = new EVMCopy(this.EVMFileOutput);
-        this.EVMFileOutput.translate(2,4,1);
-        console.log(this.EVMFileOutput.v[0]);
+        var b = new EVMCopy (this.EVMFileOutput);
+        console.log(this.EVMFileOutput.collide(b));
     };
     lector.readAsText(filename[0]);
 
 }
 
-//Mï¿½todos
+//Metodos
 EVM.prototype.putExtremeVertex = function (p) {
     this.v.push(p);
     this.NEV++;
@@ -138,7 +137,7 @@ EVM.prototype.order = function (ord) {
     }
 };
 
-//Colisiï¿½n 1D
+//Colision 1D
 EVM.prototype.collision1D = function (B) {
     var C = new EVM(B.ABC, this.dim);
     var ia = 0, ib = 0;
@@ -247,7 +246,7 @@ EVM.prototype.collision1D = function (B) {
     return(C);
 };
 
-//Colisiï¿½n
+//Colision
 EVM.prototype.collision = function (B) {
     var C = new EVM(B.ABC, this.dim);
     var sA = new EVM(B.ABC, Dimension.D2);
@@ -304,579 +303,585 @@ EVM.prototype.collision = function (B) {
 };
 
 //Union 1D
-EVM.prototype.union1D = function (B){
-  var C = new EVM(B.ABC, this.dim);
-  var ia=0, ib=0;
-  var aOrd = this.ABC;
+EVM.prototype.union1D = function (B) {
+    var C = new EVM(B.ABC, this.dim);
+    var ia = 0, ib = 0;
+    var aOrd = this.ABC;
 
-  if(this.ABC != B.ABC)
-    this.order(B.ABC);
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
 
-  while(ia < this.NEV && ib < B.NEV){
-    switch(this.ABC){
-      case EVM_Order.YZX:
-      case EVM_Order.ZYX:
-        if(this.v[ia].X > B.v[ib].X){
-          //Buscar si B no esta dentro del final de la linea en A
-          if(ia % 2 == 0)
-            C.putExtremeVertex(B.v[ib]);
-          ib++;
-        }else{
-          if(this.v[ia].X < B.v[ib].X){
-            //Buscar si A no esta dentro del final de la linea en B
-            if(ib % 2 == 0)
-              C.putExtremeVertex(this.v[ia])
-            ia++;
-          }else{
-            // A=B
-            if((ia % 2 == 0 && ib % 2 == 0) || (ia % 2 == 1 && ib % 2 == 1))
-							C.putExtremeVertex(this.v[ia]);
-						ia++;
-						ib++;
-          }
+    while (ia < this.NEV && ib < B.NEV) {
+        switch (this.ABC) {
+            case EVM_Order.YZX:
+            case EVM_Order.ZYX:
+                if (this.v[ia].X > B.v[ib].X) {
+                    //Buscar si B no esta dentro del final de la linea en A
+                    if (ia % 2 === 0)
+                        C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                } else {
+                    if (this.v[ia].X < B.v[ib].X) {
+                        //Buscar si A no esta dentro del final de la linea en B
+                        if (ib % 2 === 0)
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    } else {
+                        // A=B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+
+            case EVM_Order.XZY:
+            case EVM_Order.ZXY:
+                if (this.v[ia].Y > B.v[ib].Y) {
+                    //Buscar si B no esta dentro del final de la linea en A
+                    if (ia % 2 === 0)
+                        C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                } else {
+                    if (this.v[ia].Y < B.v[ib].Y) {
+                        //Buscar si A no esta dentro del final de la linea en B
+                        if (ib % 2 === 0)
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    } else {
+                        // A=B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+
+            case EVM_Order.XYZ:
+            case EVM_Order.YXZ:
+                if (this.v[ia].Z > B.v[ib].Z) {
+                    //Buscar si B no esta dentro del final de la linea en A
+                    if (ia % 2 === 0)
+                        C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                } else {
+                    if (this.v[ia].Z < B.v[ib].Z) {
+                        //Buscar si A no esta dentro del final de la linea en B
+                        if (ib % 2 === 0)
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    } else {
+                        // A=B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
         }
-        break;
-
-      case EVM_Order.XZY:
-      case EVM_Order.ZXY:
-        if(this.v[ia].Y > B.v[ib].Y){
-          //Buscar si B no esta dentro del final de la linea en A
-          if(ia % 2 == 0)
-            C.putExtremeVertex(B.v[ib]);
-          ib++;
-        }else{
-          if(this.v[ia].Y < B.v[ib].Y){
-            //Buscar si A no esta dentro del final de la linea en B
-            if(ib % 2 == 0)
-              C.putExtremeVertex(this.v[ia])
-            ia++;
-          }else{
-            // A=B
-            if((ia % 2 == 0 && ib % 2 == 0) || (ia % 2 == 1 && ib % 2 == 1))
-							C.putExtremeVertex(this.v[ia]);
-						ia++;
-						ib++;
-          }
-        }
-        break;
-
-        case EVM_Order.XYZ:
-        case EVM_Order.YXZ:
-          if(this.v[ia].Z > B.v[ib].Z){
-            //Buscar si B no esta dentro del final de la linea en A
-            if(ia % 2 == 0)
-              C.putExtremeVertex(B.v[ib]);
-            ib++;
-          }else{
-            if(this.v[ia].Z < B.v[ib].Z){
-              //Buscar si A no esta dentro del final de la linea en B
-              if(ib % 2 == 0)
-                C.putExtremeVertex(this.v[ia])
-              ia++;
-            }else{
-              // A=B
-              if((ia % 2 == 0 && ib % 2 == 0) || (ia % 2 == 1 && ib % 2 == 1))
-                C.putExtremeVertex(this.v[ia]);
-              ia++;
-              ib++;
-            }
-          }
-          break;
     }
-  }
 
-  while(ia < this.NEV){
-    C.putExtremeVertex(this.v[ia]);
-    ia++;
-  }
+    while (ia < this.NEV) {
+        C.putExtremeVertex(this.v[ia]);
+        ia++;
+    }
 
-  while(ib < B.NEV){
-    C.putExtremeVertex(B.v[ib]);
-    ib++;
-  }
+    while (ib < B.NEV) {
+        C.putExtremeVertex(B.v[ib]);
+        ib++;
+    }
 
-  //Return A to its original order
-  if(this.ABC !== aOrd)
-    this.order(aOrd);
+    //Return A to its original order
+    if (this.ABC !== aOrd)
+        this.order(aOrd);
 
-  return C;
-}
+    return C;
+};
 
 //Interseccion 1D
-EVM.prototype.intersection1D = function (B){
-  var C = new EVM(B.ABC, this.dim);
-	var ia = 0, ib = 0;
-	var aOrd = this.ABC;
+EVM.prototype.intersection1D = function (B) {
+    var C = new EVM(B.ABC, this.dim);
+    var ia = 0, ib = 0;
+    var aOrd = this.ABC;
 
-	// A, B and C share order
-	if(this.ABC != B.ABC)
-		this.order(B.ABC);
+    // A, B and C share order
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
 
-	while(ia < this.NEV && ib < B.NEV)
-	{
-		switch(this.ABC)
-		{
-			case EVM_Order.YZX:
-			case EVM_Order.ZYX:
-				if(this.v[ia].X > B.v[ib].X)
-				{
-					// Search if B in line ending in A
-					if(ia % 2 == 1)
-						if(this.v[ia-1].X < B.v[ib].X)
-							C.putExtremeVertex(B.v[ib]);
-					ib++;
-				}
-				else
-				{
-					if(this.v[ia].X < B.v[ib].X)
-					{
-						// Search if A in line ending in B
-						if(ib % 2 == 1)
-							if(B.v[ib-1].X < v[ia].X)
-								C.putExtremeVertex(this.v[ia]);
-						ia++;
-					}
-					else
-					{
-						// A = B
-						if((ia % 2 == 0 && ib % 2 == 0) || (ia % 2 == 1 && ib % 2 == 1))
-							C.putExtremeVertex(this.v[ia]);
-						ia++;
-						ib++;
-					}
-				}
-			break;
-			case EVM_Order.XZY:
-			case EVM_Order.ZXY:
-				if(this.v[ia].Y > B.v[ib].Y)
-				{
-					// Search if B in line ending in A
-					if(ia % 2 == 1)
-						if(this.v[ia-1].Y < B.v[ib].Y)
-							C.putExtremeVertex(B.v[ib]);
-					ib++;
-				}
-				else
-				{
-					if(this.v[ia].Y < B.v[ib].Y)
-					{
-						// Search if A in line ending in B
-						if(ib % 2 == 1)
-							if(B.v[ib-1].Y < v[ia].Y)
-								C.putExtremeVertex(this.v[ia]);
-						ia++;
-					}
-					else
-					{
-						// A = B
-						if((ia % 2 == 0 && ib % 2 == 0) || (ia % 2 == 1 && ib % 2 == 1))
-							C.putExtremeVertex(this.v[ia]);
-						ia++;
-						ib++;
-					}
-				}
-			break;
-			case EVM_Order.XYZ:
-			case EVM_Order.YXZ:
-				if(this.v[ia].Z > B.v[ib].Z)
-				{
-					// Search if B in line ending in A
-					if(ia % 2 == 1)
-						if(this.v[ia-1].Z < B.v[ib].Z)
-							C.putExtremeVertex(B.v[ib]);
-					ib++;
-				}
-				else
-				{
-					if(this.v[ia].Z < B.v[ib].Z)
-					{
-						// Search if A in line ending in B
-						if(ib % 2 == 1)
-							if(B.v[ib-1].Z < this.v[ia].Z)
-								C.putExtremeVertex(this.v[ia]);
-						ia++;
-					}
-					else
-					{
-						// A = B
-						if((ia % 2 == 0 && ib % 2 == 0) || (ia % 2 == 1 && ib % 2 == 1))
-							C.putExtremeVertex(this.v[ia]);
-						ia++;
-						ib++;
-					}
-				}
-			break;
-		}
-	}
+    while (ia < this.NEV && ib < B.NEV)
+    {
+        switch (this.ABC)
+        {
+            case EVM_Order.YZX:
+            case EVM_Order.ZYX:
+                if (this.v[ia].X > B.v[ib].X)
+                {
+                    // Search if B in line ending in A
+                    if (ia % 2 === 1)
+                        if (this.v[ia - 1].X < B.v[ib].X)
+                            C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                }
+                else
+                {
+                    if (this.v[ia].X < B.v[ib].X)
+                    {
+                        // Search if A in line ending in B
+                        if (ib % 2 === 1)
+                            if (B.v[ib - 1].X < this.v[ia].X)
+                                C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    }
+                    else
+                    {
+                        // A = B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+            case EVM_Order.XZY:
+            case EVM_Order.ZXY:
+                if (this.v[ia].Y > B.v[ib].Y)
+                {
+                    // Search if B in line ending in A
+                    if (ia % 2 === 1)
+                        if (this.v[ia - 1].Y < B.v[ib].Y)
+                            C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                }
+                else
+                {
+                    if (this.v[ia].Y < B.v[ib].Y)
+                    {
+                        // Search if A in line ending in B
+                        if (ib % 2 === 1)
+                            if (B.v[ib - 1].Y < this.v[ia].Y)
+                                C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    }
+                    else
+                    {
+                        // A = B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+            case EVM_Order.XYZ:
+            case EVM_Order.YXZ:
+                if (this.v[ia].Z > B.v[ib].Z)
+                {
+                    // Search if B in line ending in A
+                    if (ia % 2 === 1)
+                        if (this.v[ia - 1].Z < B.v[ib].Z)
+                            C.putExtremeVertex(B.v[ib]);
+                    ib++;
+                }
+                else
+                {
+                    if (this.v[ia].Z < B.v[ib].Z)
+                    {
+                        // Search if A in line ending in B
+                        if (ib % 2 === 1)
+                            if (B.v[ib - 1].Z < this.v[ia].Z)
+                                C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                    }
+                    else
+                    {
+                        // A = B
+                        if ((ia % 2 === 0 && ib % 2 === 0) || (ia % 2 === 1 && ib % 2 === 1))
+                            C.putExtremeVertex(this.v[ia]);
+                        ia++;
+                        ib++;
+                    }
+                }
+                break;
+        }
+    }
 
-	// Return A to its original order
-	if(this.ABC != aOrd)
-		this.order(aOrd);
+    // Return A to its original order
+    if (this.ABC !== aOrd)
+        this.order(aOrd);
 
-	return(C);
-}
+    return(C);
+};
 
 //MergeXOR 3D
-EVM.prototype.mergeXOR3D = function(B)
+EVM.prototype.mergeXOR3D = function (B)
 {
-	var C = new EVM(B.ABC, this.dim);
-	var ia = 0, ib = 0, aob;
-	var aOrd = this.ABC;
+    var C = new EVM(B.ABC, this.dim);
+    var ia = 0, ib = 0, aob;
+    var aOrd = this.ABC;
 
-	// A, B and C share order
-	if(this.ABC != B.ABC)
-		this.order(B.ABC);
+    // A, B and C share order
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
 
-	while(ia < this.NEV && ib < B.NEV)
-	{
-		switch(this.ABC)
-		{
-			case EVM_Order.XYZ:
-				if(this.v[ia].X < B.v[ib].X)
-					aob = 1;
-				else
-				{
-					if(this.v[ia].X > B.v[ib].X)
-						aob = 2;
-					else
-					{
-						if(this.v[ia].Y < B.v[ib].Y)
-							aob = 1;
-						else
-						{
-							if(this.v[ia].Y > B.v[ib].Y)
-								aob = 2;
-							else
-							{
-								if(this.v[ia].Z < B.v[ib].Z)
-									aob = 1;
-								else
-								{
-									if(this.v[ia].Z > B.v[ib].Z)
-										aob = 2;
-									else
-										aob = 3;
-								}
-							}
-						}
-					}
-				}
-			break;
-			case EVM_Order.XZY:
-				if(this.v[ia].X < B.v[ib].X)
-					aob = 1;
-				else
-				{
-					if(this.v[ia].X > B.v[ib].X)
-						aob = 2;
-					else
-					{
-						if(this.v[ia].Z < B.v[ib].Z)
-							aob = 1;
-						else
-						{
-							if(this.v[ia].Z > B.v[ib].Z)
-								aob = 2;
-							else
-							{
-								if(this.v[ia].Y < B.v[ib].Y)
-									aob = 1;
-								else
-								{
-									if(this.v[ia].Y > B.v[ib].Y)
-										aob = 2;
-									else
-										aob = 3;
-								}
-							}
-						}
-					}
-				}
-			break;
-			case EVM_Order.YXZ:
-				if(this.v[ia].Y < B.v[ib].Y)
-					aob = 1;
-				else
-				{
-					if(this.v[ia].Y > B.v[ib].Y)
-						aob = 2;
-					else
-					{
-						if(this.v[ia].X < B.v[ib].X)
-							aob = 1;
-						else
-						{
-							if(this.v[ia].X > B.v[ib].X)
-								aob = 2;
-							else
-							{
-								if(this.v[ia].Z < B.v[ib].Z)
-									aob = 1;
-								else
-								{
-									if(this.v[ia].Z > B.v[ib].Z)
-										aob = 2;
-									else
-										aob = 3;
-								}
-							}
-						}
-					}
-				}
-			break;
-			case EVM_Order.YZX:
-				if(this.v[ia].Y < B.v[ib].Y)
-					aob = 1;
-				else
-				{
-					if(this.v[ia].Y > B.v[ib].Y)
-						aob = 2;
-					else
-					{
-						if(this.v[ia].Z < B.v[ib].Z)
-							aob = 1;
-						else
-						{
-							if(this.v[ia].Z > B.v[ib].Z)
-								aob = 2;
-							else
-							{
-								if(this.v[ia].X < B.v[ib].X)
-									aob = 1;
-								else
-								{
-									if(this.v[ia].X > B.v[ib].X)
-										aob = 2;
-									else
-										aob = 3;
-								}
-							}
-						}
-					}
-				}
-			break;
-			case EVM_Order.ZXY:
-				if(this.v[ia].Z < B.v[ib].Z)
-					aob = 1;
-				else
-				{
-					if(this.v[ia].Z > B.v[ib].Z)
-						aob = 2;
-					else
-					{
-						if(this.v[ia].X < B.v[ib].X)
-							aob = 1;
-						else
-						{
-							if(this.v[ia].X > B.v[ib].X)
-								aob = 2;
-							else
-							{
-								if(this.v[ia].Y < B.v[ib].Y)
-									aob = 1;
-								else
-								{
-									if(this.v[ia].Y > B.v[ib].Y)
-										aob = 2;
-									else
-										aob = 3;
-								}
-							}
-						}
-					}
-				}
-			break;
-			case EVM_Order.ZYX:
-				if(this.v[ia].Z < B.v[ib].Z)
-					aob = 1;
-				else
-				{
-					if(this.v[ia].Z > B.v[ib].Z)
-						aob = 2;
-					else
-					{
-						if(this.v[ia].Y < B.v[ib].Y)
-							aob = 1;
-						else
-						{
-							if(this.v[ia].Y > B.v[ib].Y)
-								aob = 2;
-							else
-							{
-								if(this.v[ia].X < B.v[ib].X)
-									aob = 1;
-								else
-								{
-									if(this.v[ia].X > B.v[ib].X)
-										aob = 2;
-									else
-										aob = 3;
-								}
-							}
-						}
-					}
-				}
-			break;
-		}
+    while (ia < this.NEV && ib < B.NEV)
+    {
+        switch (this.ABC)
+        {
+            case EVM_Order.XYZ:
+                if (this.v[ia].X < B.v[ib].X)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].X > B.v[ib].X)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].Y < B.v[ib].Y)
+                            aob = 1;
+                        else
+                        {
+                            if (this.v[ia].Y > B.v[ib].Y)
+                                aob = 2;
+                            else
+                            {
+                                if (this.v[ia].Z < B.v[ib].Z)
+                                    aob = 1;
+                                else
+                                {
+                                    if (this.v[ia].Z > B.v[ib].Z)
+                                        aob = 2;
+                                    else
+                                        aob = 3;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            case EVM_Order.XZY:
+                if (this.v[ia].X < B.v[ib].X)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].X > B.v[ib].X)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].Z < B.v[ib].Z)
+                            aob = 1;
+                        else
+                        {
+                            if (this.v[ia].Z > B.v[ib].Z)
+                                aob = 2;
+                            else
+                            {
+                                if (this.v[ia].Y < B.v[ib].Y)
+                                    aob = 1;
+                                else
+                                {
+                                    if (this.v[ia].Y > B.v[ib].Y)
+                                        aob = 2;
+                                    else
+                                        aob = 3;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            case EVM_Order.YXZ:
+                if (this.v[ia].Y < B.v[ib].Y)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].Y > B.v[ib].Y)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].X < B.v[ib].X)
+                            aob = 1;
+                        else
+                        {
+                            if (this.v[ia].X > B.v[ib].X)
+                                aob = 2;
+                            else
+                            {
+                                if (this.v[ia].Z < B.v[ib].Z)
+                                    aob = 1;
+                                else
+                                {
+                                    if (this.v[ia].Z > B.v[ib].Z)
+                                        aob = 2;
+                                    else
+                                        aob = 3;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            case EVM_Order.YZX:
+                if (this.v[ia].Y < B.v[ib].Y)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].Y > B.v[ib].Y)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].Z < B.v[ib].Z)
+                            aob = 1;
+                        else
+                        {
+                            if (this.v[ia].Z > B.v[ib].Z)
+                                aob = 2;
+                            else
+                            {
+                                if (this.v[ia].X < B.v[ib].X)
+                                    aob = 1;
+                                else
+                                {
+                                    if (this.v[ia].X > B.v[ib].X)
+                                        aob = 2;
+                                    else
+                                        aob = 3;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            case EVM_Order.ZXY:
+                if (this.v[ia].Z < B.v[ib].Z)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].Z > B.v[ib].Z)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].X < B.v[ib].X)
+                            aob = 1;
+                        else
+                        {
+                            if (this.v[ia].X > B.v[ib].X)
+                                aob = 2;
+                            else
+                            {
+                                if (this.v[ia].Y < B.v[ib].Y)
+                                    aob = 1;
+                                else
+                                {
+                                    if (this.v[ia].Y > B.v[ib].Y)
+                                        aob = 2;
+                                    else
+                                        aob = 3;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            case EVM_Order.ZYX:
+                if (this.v[ia].Z < B.v[ib].Z)
+                    aob = 1;
+                else
+                {
+                    if (this.v[ia].Z > B.v[ib].Z)
+                        aob = 2;
+                    else
+                    {
+                        if (this.v[ia].Y < B.v[ib].Y)
+                            aob = 1;
+                        else
+                        {
+                            if (this.v[ia].Y > B.v[ib].Y)
+                                aob = 2;
+                            else
+                            {
+                                if (this.v[ia].X < B.v[ib].X)
+                                    aob = 1;
+                                else
+                                {
+                                    if (this.v[ia].X > B.v[ib].X)
+                                        aob = 2;
+                                    else
+                                        aob = 3;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+        }
 
-		switch(aob)
-		{
-			case 1:
-				C.putExtremeVertex(this.v[ia]);
-				ia++;
-			break;
-			case 2:
-				C.putExtremeVertex(B.v[ib]);
-				ib++;
-			break;
-			case 3:
-				ia++;
-				ib++;
-			break;
-		}
-	}
-	while(ia < this.NEV)
-	{
-		C.putExtremeVertex(this.v[ia]);
-		ia++;
-	}
-	while(ib < B.NEV)
-	{
-		C.putExtremeVertex(B.v[ib]);
-		ib++;
-	}
+        switch (aob)
+        {
+            case 1:
+                C.putExtremeVertex(this.v[ia]);
+                ia++;
+                break;
+            case 2:
+                C.putExtremeVertex(B.v[ib]);
+                ib++;
+                break;
+            case 3:
+                ia++;
+                ib++;
+                break;
+        }
+    }
+    while (ia < this.NEV)
+    {
+        C.putExtremeVertex(this.v[ia]);
+        ia++;
+    }
+    while (ib < B.NEV)
+    {
+        C.putExtremeVertex(B.v[ib]);
+        ib++;
+    }
 
-	// Return A to its original order
-	if(this.ABC != aOrd)
-		this.order(aOrd);
+    // Return A to its original order
+    if (this.ABC !== aOrd)
+        this.order(aOrd);
 
-	return(C);
-}
+    return(C);
+};
 
 // Retorna la diferencia entre EVMs 3D
-EVM.prototype.mergeXOR = function(B)
+EVM.prototype.mergeXOR = function (B)
 {
-	var C = new EVM(this.ABC, this.dim);
-	if(this.dim == B.dim)
-	{
-		switch(this.dim)
-		{
-			case Dimension.D1: C = this.mergeXOR1D(B); break;
-			case Dimension.D2: C = this.mergeXOR2D(B); break;
-			case Dimension.D3: C = this.mergeXOR3D(B); break;
-		}
-	}
-	else
-	{
-		cerr << "Error: The dimensions of A and B do not match." << endl;
-	}
-	return(C);
-}
+    var C = new EVM(this.ABC, this.dim);
+    if (this.dim === B.dim)
+    {
+        switch (this.dim)
+        {
+            case Dimension.D1:
+                C = this.mergeXOR1D(B);
+                break;
+            case Dimension.D2:
+                C = this.mergeXOR2D(B);
+                break;
+            case Dimension.D3:
+                C = this.mergeXOR3D(B);
+                break;
+        }
+    }
+    else
+    {
+        cerr << "Error: The dimensions of A and B do not match." << endl;
+    }
+    return(C);
+};
 
-EVM.prototype.difference1D = function(B)
+EVM.prototype.difference1D = function (B)
 {
-	var C = new EVM(B.ABC, this.dim);
-	var ia = 0, ib = 0, aob;
-	var aOrd = this.ABC;
+    var C = new EVM(B.ABC, this.dim);
+    var ia = 0, ib = 0, aob;
+    var aOrd = this.ABC;
 
-	// A, B and C share order
-	if(this.ABC != B.ABC)
-    this.order(B.ABC);
+    // A, B and C share order
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
 
-	while(ia < this.NEV && ib < B.NEV)
-	{
-		switch(this.ABC)
-		{
-			case EVM_Order.YZX:
-			case EVM_Order.ZYX:
-				if(this.v[ia].X < B.v[ib].X)
-					aob = 1;
-				else
-					if(this.v[ia].X > B.v[ib].X)
-						aob = 2;
-					else
-						aob = 3;
-			break;
-			case EVM_Order.XZY:
-			case EVM_Order.ZXY:
-				if(this.v[ia].Y < B.v[ib].Y)
-					aob = 1;
-				else
-					if(this.v[ia].Y > B.v[ib].Y)
-						aob = 2;
-					else
-						aob = 3;
-			break;
-			case EVM_Order.XYZ:
-			case EVM_Order.YXZ:
-				if(this.v[ia].Z < B.v[ib].Z)
-					aob = 1;
-				else
-					if(this.v[ia].Z > B.v[ib].Z)
-						aob = 2;
-					else
-						aob = 3;
-			break;
-		}
-		switch(aob)
-		{
-			case 1:
-				if(ib % 2 == 0) // B beginning line
-					C.putExtremeVertex(this.v[ia]);
-				ia++;
-			break;
-			case 2:
-				if(ia % 2 == 1) // A ending line
-				{
-					switch(this.ABC)
-					{
-						case EVM_Order.XYZ:
-						case EVM_Order.YXZ:
-							if(this.v[ia-1].Z < B.v[ib].Z) // B in line
-								C.putExtremeVertex(B.v[ib]);
-						break;
-						case EVM_Order.XZY:
-						case EVM_Order.ZXY:
-							if(this.v[ia-1].Y < B.v[ib].Y) // B in line
-								C.putExtremeVertex(B.v[ib]);
-						break;
-						case EVM_Order.YZX:
-						case EVM_Order.ZYX:
-							if(this.v[ia-1].X < B.v[ib].X) // B in line
-								C.putExtremeVertex(B.v[ib]);
-						break;
-					}
-				}
-				ib++;
-			break;
-			case 3:
-				if(ia % 2 == 0)     // A beginning line
-				{
-					if(ib % 2 == 1) // B ending line
-						C.putExtremeVertex(this.v[ia]);
-				}
-				else // A ending line
-				{
-					if(ib % 2 == 0) // B beginning line
-						C.putExtremeVertex(this.v[ia]);
-				}
-				ia++;
-				ib++;
-			break;
-		}
-	}
-	while(ia < this.NEV)
-	{
-		C.putExtremeVertex(this.v[ia]);
-		ia++;
-	}
+    while (ia < this.NEV && ib < B.NEV)
+    {
+        switch (this.ABC)
+        {
+            case EVM_Order.YZX:
+            case EVM_Order.ZYX:
+                if (this.v[ia].X < B.v[ib].X)
+                    aob = 1;
+                else
+                if (this.v[ia].X > B.v[ib].X)
+                    aob = 2;
+                else
+                    aob = 3;
+                break;
+            case EVM_Order.XZY:
+            case EVM_Order.ZXY:
+                if (this.v[ia].Y < B.v[ib].Y)
+                    aob = 1;
+                else
+                if (this.v[ia].Y > B.v[ib].Y)
+                    aob = 2;
+                else
+                    aob = 3;
+                break;
+            case EVM_Order.XYZ:
+            case EVM_Order.YXZ:
+                if (this.v[ia].Z < B.v[ib].Z)
+                    aob = 1;
+                else
+                if (this.v[ia].Z > B.v[ib].Z)
+                    aob = 2;
+                else
+                    aob = 3;
+                break;
+        }
+        switch (aob)
+        {
+            case 1:
+                if (ib % 2 === 0) // B beginning line
+                    C.putExtremeVertex(this.v[ia]);
+                ia++;
+                break;
+            case 2:
+                if (ia % 2 === 1) // A ending line
+                {
+                    switch (this.ABC)
+                    {
+                        case EVM_Order.XYZ:
+                        case EVM_Order.YXZ:
+                            if (this.v[ia - 1].Z < B.v[ib].Z) // B in line
+                                C.putExtremeVertex(B.v[ib]);
+                            break;
+                        case EVM_Order.XZY:
+                        case EVM_Order.ZXY:
+                            if (this.v[ia - 1].Y < B.v[ib].Y) // B in line
+                                C.putExtremeVertex(B.v[ib]);
+                            break;
+                        case EVM_Order.YZX:
+                        case EVM_Order.ZYX:
+                            if (this.v[ia - 1].X < B.v[ib].X) // B in line
+                                C.putExtremeVertex(B.v[ib]);
+                            break;
+                    }
+                }
+                ib++;
+                break;
+            case 3:
+                if (ia % 2 === 0)     // A beginning line
+                {
+                    if (ib % 2 === 1) // B ending line
+                        C.putExtremeVertex(this.v[ia]);
+                }
+                else // A ending line
+                {
+                    if (ib % 2 === 0) // B beginning line
+                        C.putExtremeVertex(this.v[ia]);
+                }
+                ia++;
+                ib++;
+                break;
+        }
+    }
+    while (ia < this.NEV)
+    {
+        C.putExtremeVertex(this.v[ia]);
+        ia++;
+    }
 
-	// Return A to its original order
-	if(this.ABC != aOrd)
-		this.order(aOrd);
+    // Return A to its original order
+    if (this.ABC !== aOrd)
+        this.order(aOrd);
 
-	return(C);
-}
+    return(C);
+};
 
 EVM.prototype.nextObject = function (B, ia, ib) {
     var inv = -1.7976931348623157e+308;
@@ -1063,7 +1068,7 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
 };
 
 //ia es el primer vertice para leer
-// dim es la dimensiï¿½n: 3 or 2
+// dim es la dimension: 3 or 2
 //dim = 3: extraer un plano desde un objecto
 //dim = 2: extraer una linea desde un plano
 EVM.prototype.readPlv = function (esA) {
@@ -1518,146 +1523,154 @@ EVM.prototype.putPlv = function (plv) {
 // 2 = MergeXOR
 // 3 = Difference
 // 4 = Union
-EVM.prototype.operation = function(B, op)
+EVM.prototype.operation = function (B, op)
 {
-	var C = new EVM(B.ABC, this.dim);
-	var sA = new EVM(B.ABC, Dimension.D2);
-  var sB = new EVM(B.ABC, Dimension.D2);
-  var sCcurr = new EVM(B.ABC, Dimension.D2);
-  var sCprev = new EVM(B.ABC, Dimension.D2);
-  var plv = new EVM(B.ABC, Dimension.D2);
-	fromA = false, fromB = false;
-	ia = 0, ib = 0;
-	coord = 0;
-	var aOrd = this.ABC;
+    var C = new EVM(B.ABC, this.dim);
+    var sA = new EVM(B.ABC, Dimension.D2);
+    var sB = new EVM(B.ABC, Dimension.D2);
+    var sCcurr = new EVM(B.ABC, Dimension.D2);
+    var sCprev = new EVM(B.ABC, Dimension.D2);
+    var plv = new EVM(B.ABC, Dimension.D2);
+    fromA = false, fromB = false;
+    ia = 0, ib = 0;
+    coord = 0;
+    var aOrd = this.ABC;
 
-	// A, B and C share order
-	if(this.ABC != B.ABC)
-		this.order(B.ABC);
+    // A, B and C share order
+    if (this.ABC !== B.ABC)
+        this.order(B.ABC);
 
-	if(this.dim == Dimension.D1)
-	{
-		switch(op)
-		{
-			case 1: C = this.intersection1D(B); break;
-			case 2: C = this.mergeXOR1D(B); break;
-			case 3: C = this.difference1D(B); break;
-			case 4: C = this.union1D(B); break;
-		}
-	}
-	else
-	{
-		if(dim == Dimension.D2)
-		{
-			sA.dim = Dimension.D1;
-			sB.dim = Dimension.D1;
-			sCcurr.dim = Dimension.D1;
-			sCprev.dim = Dimension.D1;
-			plv.dim = Dimension.D1;
-		}
-		ia = 0;
-		ib = 0;
-		this.nextObject(B, ia, ib);
-		this.improve(B, op, plv, sA, sB, C, sCprev, sCcurr);
-		while(ia < this.NEV && ib < B.NEV)
-		{
-			if(fromA)
-			{
-				plv = this.readPlv(true);
-				sA = sA.getSection(plv);
-			}
-			if(fromB)
-			{
-				plv = B.readPlv(false);
-				sB = sB.getSection(plv);
-			}
-			sCprev = sCcurr;
+    if (this.dim === Dimension.D1)
+    {
+        switch (op)
+        {
+            case 1:
+                C = this.intersection1D(B);
+                break;
+            case 2:
+                C = this.mergeXOR1D(B);
+                break;
+            case 3:
+                C = this.difference1D(B);
+                break;
+            case 4:
+                C = this.union1D(B);
+                break;
+        }
+    }
+    else
+    {
+        if (this.dim === Dimension.D2)
+        {
+            sA.dim = Dimension.D1;
+            sB.dim = Dimension.D1;
+            sCcurr.dim = Dimension.D1;
+            sCprev.dim = Dimension.D1;
+            plv.dim = Dimension.D1;
+        }
+        ia = 0;
+        ib = 0;
+        this.nextObject(B, ia, ib);
+        this.improve(B, op, plv, sA, sB, C, sCprev, sCcurr);
+        while (ia < this.NEV && ib < B.NEV)
+        {
+            if (fromA)
+            {
+                plv = this.readPlv(true);
+                sA = sA.getSection(plv);
+            }
+            if (fromB)
+            {
+                plv = B.readPlv(false);
+                sB = sB.getSection(plv);
+            }
+            sCprev = sCcurr;
 
-			if(op != 2)
-				sCcurr = sA.operation(sB, op); // Recursive call
-			else // mergeXor
-			{
-				if(this.dim == Dimension.D3)
-					sCcurr = sA.mergeXOR2D(sB);
-				else
-					sCcurr = sA.mergeXOR1D(sB);
-			}
+            if (op !== 2)
+                sCcurr = sA.operation(sB, op); // Recursive call
+            else // mergeXor
+            {
+                if (this.dim === Dimension.D3)
+                    sCcurr = sA.mergeXOR2D(sB);
+                else
+                    sCcurr = sA.mergeXOR1D(sB);
+            }
 
-			plv = sCprev.getPlv(sCcurr);
-			plv.setCoordinate(coord);
-			C.putPlv(plv);
+            plv = sCprev.getPlv(sCcurr);
+            plv.setCoordinate(coord);
+            C.putPlv(plv);
 
-			this.nextObject(B, ia, ib);
-		}
-		switch(op)
-		{
-			case 3:
-				while(ia < this.NEV)
-				{
-					plv = readPlv(true);
-					C.putPlv(plv);
-				}
-			break;
-			case 2:
-			case 4:
-				while(ia < this.NEV)
-				{
-					plv = readPlv(true);
-					C.putPlv(plv);
-				}
-				while(ib < B.NEV)
-				{
-					plv = B.readPlv(false);
-					C.putPlv(plv);
-				}
-			break;
-		}
-	}
+            this.nextObject(B, ia, ib);
+        }
+        switch (op)
+        {
+            case 3:
+                while (ia < this.NEV)
+                {
+                    plv = readPlv(true);
+                    C.putPlv(plv);
+                }
+                break;
+            case 2:
+            case 4:
+                while (ia < this.NEV)
+                {
+                    plv = readPlv(true);
+                    C.putPlv(plv);
+                }
+                while (ib < B.NEV)
+                {
+                    plv = B.readPlv(false);
+                    C.putPlv(plv);
+                }
+                break;
+        }
+    }
 
-	// Return A to its original order
-	if(this.ABC != aOrd)
-		this.order(aOrd);
+    // Return A to its original order
+    if (this.ABC !== aOrd)
+        this.order(aOrd);
 
-	return(C);
+    return(C);
 };
 
 // Deteccion de colision entre EVMs
-EVM.prototype.collide = function(B)
+EVM.prototype.collide = function (B)
 {
-	var C = new EVM(B.ABC, this.dim);
-	C = this.collision(B);
-	return(C.NEV != 0);
+    var C = new EVM(B.ABC, this.dim);
+    C = this.collision(B);
+    return(C.NEV !== 0);
 };
 
 // Retorna la union entre EVMs
-EVM.prototype.unite = function(B)
+EVM.prototype.unite = function (B)
 {
-	if(this.dim == B.dim)
-		return(this.operation(B, 4));
+    if (this.dim === B.dim)
+        return(this.operation(B, 4));
 
-  cerr << "Error: The dimensions of A and B do not match." << endl;
-  var C = new EVM(this.ABC, this.dim);
-  return(C);
+    cerr << "Error: The dimensions of A and B do not match." << endl;
+    var C = new EVM(this.ABC, this.dim);
+    return(C);
 };
 
 // Retorna la interseccion entre EVMs 3D
-EVM.prototype.intersection = function(B)
+EVM.prototype.intersection = function (B)
 {
-	if(this.dim == B.dim)
-		return(this.operation(B, 1));
-	cerr << "Error: The dimensions of A and B do not match." << endl;
-  var C = new EVM(this.ABC, this.dim);
-  return(C);
+    if (this.dim === B.dim)
+        return(this.operation(B, 1));
+    cerr << "Error: The dimensions of A and B do not match." << endl;
+    var C = new EVM(this.ABC, this.dim);
+    return(C);
 };
 
 // Returns difference between 3D EVMs
-EVM.prototype.difference = function(B)
+EVM.prototype.difference = function (B)
 {
-	if(this.dim == B.dim)
-		return(this.operation(B, 3));
-	cerr << "Error: The dimensions of A and B do not match." << endl;
-  var C = new EVM(this.ABC, this.dim);
-  return(C);
+    if (this.dim === B.dim)
+        return(this.operation(B, 3));
+    cerr << "Error: The dimensions of A and B do not match." << endl;
+    var C = new EVM(this.ABC, this.dim);
+    return(C);
 };
 
 // Translada todos los vertices de un EVM
@@ -1665,175 +1678,539 @@ EVM.prototype.difference = function(B)
 //   - tx: translacion en x
 //   - ty: translacion en y
 //   - tz: translacion en z
-EVM.prototype.translate = function(tx,ty,tz)
+EVM.prototype.translate = function (tx, ty, tz)
 {
-	var i;
-	for(i=0; i<this.NEV; i++)
-		this.v[i].translate(tx, ty, tz);
+    var i;
+    for (i = 0; i < this.NEV; i++)
+        this.v[i].translate(tx, ty, tz);
 };
 
 // Agrega un vector de bordes para pares de EVM que representan un borde
-EVM.prototype.addEdges = function(edges, dir)
+EVM.prototype.addEdges = function (edges, dir)
 {
-	var i;
-  var pA = new Point3D(0,0,0);
-  var pB = new Point3D(0,0,0);
-	var line = new Line3D(pA, pB);
-	if(dir)
-	{
-		i = 0;
-		while(i < this.NEV)
-		{
-			line.p1 = v[i];
-			line.p2 = v[i+1];
-			edges.push(line);
-			i = i + 2;
-		}
-	}
-	else
-	{
-		i = this.NEV - 1;
-		while(i >= 0)
-		{
-			line.p1 = v[i];
-			line.p2 = v[i-1];
-			edges.push(line);
-			i = i - 2;
-		}
-	}
+    var i;
+    var pA = new Point3D(0, 0, 0);
+    var pB = new Point3D(0, 0, 0);
+    var line = new Line3D(pA, pB);
+    if (dir)
+    {
+        i = 0;
+        while (i < this.NEV)
+        {
+            line.p1 = v[i];
+            line.p2 = v[i + 1];
+            edges.push(line);
+            i = i + 2;
+        }
+    }
+    else
+    {
+        i = this.NEV - 1;
+        while (i >= 0)
+        {
+            line.p1 = v[i];
+            line.p2 = v[i - 1];
+            edges.push(line);
+            i = i - 2;
+        }
+    }
 };
 
 // Order as a face the vector of edges
-EVM.prototype.orderEdges = function(edges)
+EVM.prototype.orderEdges = function (edges)
 {
-	var i, j, dira, dirb, band, ini;
-	var aux = new Line3Dnull();
+    var i, j, dira, dirb, band, ini;
+    var aux = new Line3Dnull();
 
-	ini = 0; // First edge of face
-	i = ini;
-	while(i < edges.length)
-	{
-		// Direction of A edge
-		if(edges[i].P1.X != edges[i].P2.X)
-			dira = 1;
-		else
-			if(edges[i].P1.Y != edges[i].P2.Y)
-				dira = 2;
-			else
-				dira = 3;
+    ini = 0; // First edge of face
+    i = ini;
+    while (i < edges.length)
+    {
+        // Direction of A edge
+        if (edges[i].P1.X !== edges[i].P2.X)
+            dira = 1;
+        else
+        if (edges[i].P1.Y !== edges[i].P2.Y)
+            dira = 2;
+        else
+            dira = 3;
 
-		j = i + 1;
-		band = 0;
-		while(!band && j < edges.length)
-		{
-			// Direction of B edge
-			if(edges[j].P1.X != edges[j].P2.X)
-				dirb = 1;
-			else
-				if(edges[j].P1.Y != edges[j].P2.Y)
-					dirb = 2;
-				else
-					dirb = 3;
+        j = i + 1;
+        band = 0;
+        while (!band && j < edges.length)
+        {
+            // Direction of B edge
+            if (edges[j].P1.X !== edges[j].P2.X)
+                dirb = 1;
+            else
+            if (edges[j].P1.Y !== edges[j].P2.Y)
+                dirb = 2;
+            else
+                dirb = 3;
 
-			// Must change direction and P2 of edge i is equal to P1 of edge j
-			//
-			//    Edge i       Edge j
-			// P1 ------ P2 P1 ------ P2
-			if( (dira != dirb) && (edges[i].P2 == edges[j].P1) )
-			{
-				band = 1;
-				if(j != i + 1)
-				{
-					// Swap
-					aux = edges[i+1];
-					edges[i+1] = edges[j];
-					edges[j] = aux;
-				}
+            // Must change direction and P2 of edge i is equal to P1 of edge j
+            //
+            //    Edge i       Edge j
+            // P1 ------ P2 P1 ------ P2
+            if ((dira !== dirb) && (edges[i].P2 === edges[j].P1))
+            {
+                band = 1;
+                if (j !== i + 1)
+                {
+                    // Swap
+                    aux = edges[i + 1];
+                    edges[i + 1] = edges[j];
+                    edges[j] = aux;
+                }
 
-				// Last edge to form face
-				// P2 of edge i+1 is equal to P1 of edge ini (first edge of face)
-				// Edge i+1    Edge ini
-				// P1 ----- P2 P1 ----- P2
-				if(edges[i+1].P2 == edges[ini].P1)
-				{
-					i++;
-					ini = i + 1;
-				}
-			}
-			j++;
-		}
-		i++;
-	}
+                // Last edge to form face
+                // P2 of edge i+1 is equal to P1 of edge ini (first edge of face)
+                // Edge i+1    Edge ini
+                // P1 ----- P2 P1 ----- P2
+                if (edges[i + 1].P2 === edges[ini].P1)
+                {
+                    i++;
+                    ini = i + 1;
+                }
+            }
+            j++;
+        }
+        i++;
+    }
 };
 
 // Convert a concave 2D EVM face in a set of convex 2D EVM faces
-EVM.prototype.tesselateFace = function()
+EVM.prototype.tesselateFace = function ()
 {
-	var tfaces = new Array();
-	var tface = new EVM(this.ABC, Dimension.D2);
-	var plv = new EVM(this.ABC, Dimension.D1);
-  var Si = new EVM(this.ABC, Dimension.D1);
-  var Sj = new EVM(this.ABC, Dimension.D1);
-  var Sjc = new EVM(this.ABC, Dimension.D1);
-	var i, j, k;
-	var point = new Point3d(0, 0, 0);
-	var fixed1, fixed2;
+    var tfaces = new Array();
+    var tface = new EVM(this.ABC, Dimension.D2);
+    var plv = new EVM(this.ABC, Dimension.D1);
+    var Si = new EVM(this.ABC, Dimension.D1);
+    var Sj = new EVM(this.ABC, Dimension.D1);
+    var Sjc = new EVM(this.ABC, Dimension.D1);
+    var i, j, k;
+    var point = new Point3D(0, 0, 0);
+    var fixed1, fixed2;
 
-	if(this.dim == Dimension.D2)
-	{
-		i=0;
-		while(i < this.NEV)
-		{
-			switch(this.ABC)
-			{
-				case EVM_Order.YXZ:
-				case EVM_Order.ZXY:
-					fixed1 = this.v[i].X;
-					plv = this.readPlv(i);
-					fixed2 = this.v[i].X;
-				break;
-				case EVM_Order.XYZ:
-				case EVM_Order.ZYX:
-					fixed1 = this.v[i].Y;
-					plv = this.readPlv(i);
-					fixed2 = this.v[i].Y;
-				break;
-				case EVM_Order.XZY:
-				case EVM_Order.YZX:
-					fixed1 = this.v[i].Z;
-					plv = this.readPlv(i);
-					fixed2 = this.v[i].Z;
-				break;
-			}
+    if (this.dim === Dimension.D2)
+    {
+        i = 0;
+        while (i < this.NEV)
+        {
+            switch (this.ABC)
+            {
+                case EVM_Order.YXZ:
+                case EVM_Order.ZXY:
+                    fixed1 = this.v[i].X;
+                    plv = this.readPlv(i);
+                    fixed2 = this.v[i].X;
+                    break;
+                case EVM_Order.XYZ:
+                case EVM_Order.ZYX:
+                    fixed1 = this.v[i].Y;
+                    plv = this.readPlv(i);
+                    fixed2 = this.v[i].Y;
+                    break;
+                case EVM_Order.XZY:
+                case EVM_Order.YZX:
+                    fixed1 = this.v[i].Z;
+                    plv = this.readPlv(i);
+                    fixed2 = this.v[i].Z;
+                    break;
+            }
 
-			Sj = Si.getSection(plv);
+            Sj = Si.getSection(plv);
 
-			if(Sj.NEV != 0) // The section is not empty
-			{
-				Sj.setCoordinate(fixed1);
-				Sjc = Sj;
-				Sjc.setCoordinate(fixed2);
+            if (Sj.NEV !== 0) // The section is not empty
+            {
+                Sj.setCoordinate(fixed1);
+                Sjc = Sj;
+                Sjc.setCoordinate(fixed2);
 
-				j = 0;
-				while(j < Sj.NEV)
-				{
-					tface.putExtremeVertex(Sj.v[j]);    // Point a
-					tface.putExtremeVertex(Sj.v[j+1]);  // Point d
-					tface.putExtremeVertex(Sjc.v[j]);   // Point b
-					tface.putExtremeVertex(Sjc.v[j+1]); // Point c
+                j = 0;
+                while (j < Sj.NEV)
+                {
+                    tface.putExtremeVertex(Sj.v[j]);    // Point a
+                    tface.putExtremeVertex(Sj.v[j + 1]);  // Point d
+                    tface.putExtremeVertex(Sjc.v[j]);   // Point b
+                    tface.putExtremeVertex(Sjc.v[j + 1]); // Point c
 
-					tfaces.push(tface);
-					tface = new EVM(this.ABC, Dimension.D2);
-					j = j + 2;
-				}
-				Si = Sjc;
-			}
-		}
-	}
-	else
-		cerr << "Error: Can't tesselate 1D or 3D EVMs." << endl;
-	return(tfaces);
-}
+                    tfaces.push(tface);
+                    tface = new EVM(this.ABC, Dimension.D2);
+                    j = j + 2;
+                }
+                Si = Sjc;
+            }
+        }
+    }
+    else
+        console.log("Error: Can't tesselate 1D or 3D EVMs.");
+    return(tfaces);
+};
+
+// Static
+// From a vector of faces (vector of edges that form faces) insert faces in obj
+// tess: 0 = no tess, 1 = triangles, 2 = squares
+EVM.prototype.insertFacesInObject = function (obj, faces, dir, tess)
+{
+    // If   faces is 1-2, 2-3, 3-4, 4-1, 5-6, 6-7, 7-8, 8-5:
+    // 
+    //  4---3   8---7
+    //  |   |   |   |
+    //  1---2   5---6
+    //
+    // then face  is 1 2 3 4 first and 5 6 7 8 second.
+    //
+    // If there's a face with > 4 points, there's a tesselation process:
+    //
+    //                  4--3
+    //    4--3          |  |
+    //    |  |          5--2'
+    // 6--5  |  -->  6-----2'
+    // |     |       |     |
+    // 1-----2       1-----2
+    //
+    var i, j, ini, k;
+    var face = new EVM(EVM_Order.XYZ, Dimension.D2);
+    var tfaces = new Array();
+    var edges = new Array();
+    var objFaceEdges = new Array();
+    var objFace = new Array();
+    var ACB;
+    var evPerFace = 4;
+
+    if (tess === 1)
+        evPerFace = 3;
+
+    ini = 0;
+    i = 0;
+    while (i < faces.length)
+    {
+        // Extract Face
+        do
+        {
+            face.putExtremeVertex(faces[i].P1);
+            i++;
+        } while (faces[i - 1].P2 !== faces[ini].P1);
+        ini = i;
+
+        // Verify number of vertices on face
+        if (evPerFace > 0 && face.NEV > evPerFace) // Need tesselation
+        {
+            // Verify order and act accordingly
+            if (face.v[0].X === face.v[1].X && face.v[1].X === face.v[2].X)
+            {
+                face.order(EVM_Order.XYZ);     // Plane in X
+                ACB = EVM_Order.XZY;
+            }
+            else
+            {
+                if (face.v[0].Y === face.v[1].Y && face.v[1].Y === face.v[2].Y)
+                {
+                    face.order(EVM_Order.YZX); // Plane in Y
+                    ACB = EVM_Order.YXZ;
+                }
+                else
+                {
+                    face.order(EVM_Order.ZXY); // Plane in Z
+                    ACB = EVM_Order.ZYX;
+                }
+            }
+            // Obtain set of EVM faces and insert in obj
+            tfaces = face.tesselateFace();
+            for (j = 0; j < tfaces.length; j++)
+            {
+                // Detect direction (Calculate objFace vector of lines)
+                edges = tfaces[j].computeEdges1D(dir);
+                objFaceEdges.splice(objFaceEdges.length, 0, edges);
+                tfaces[j].order(ACB);
+                edges = tfaces[j].computeEdges1D(!dir);
+                objFaceEdges.splice(objFaceEdges.length, 0, edges);
+                this.orderEdges(objFaceEdges);
+                // Insert in order
+                if (tess === 1)
+                {
+                    // Obtain and insert objFace (Triangle 1) in obj
+                    objFace.push(objFaceEdges[0].P1);
+                    objFace.push(objFaceEdges[1].P1);
+                    objFace.push(objFaceEdges[2].P1);
+                    obj.face(objFace);
+                    objFace.splice(0);
+                    // Obtain and insert objFace (Triangle 2) in obj
+                    objFace.push(objFaceEdges[0].P1);
+                    objFace.push(objFaceEdges[2].P1);
+                    objFace.push(objFaceEdges[3].P1);
+                    obj.face(objFace);
+                }
+                else
+                {
+                    // Obtain and insert objFace in obj
+                    objFace.push(objFaceEdges[0].P1);
+                    objFace.push(objFaceEdges[1].P1);
+                    objFace.push(objFaceEdges[2].P1);
+                    objFace.push(objFaceEdges[3].P1);
+                    obj.face(objFace);
+                }
+                // Erase
+                objFaceEdges.splice(0);
+                objFace.splice(0);
+            }
+        }
+        else
+        {
+            obj.nuevaCara(face.v);
+        }
+        face = new EVM(EVM_Order.XYZ, Dimension.D2);
+    }
+};
+
+// Compute the vector of edges with their directions to form faces
+EVM.prototype.computeEdges1D = function (dir)
+{
+    var edges = new Array();
+    var ip;
+    var Si = new EVM(this.ABC, Dimension.D1);
+    var Sj = new EVM(this.ABC, Dimension.D1);
+    var plv = new EVM(this.ABC, Dimension.D1);
+    var FD = new EVM(this.ABC, Dimension.D1);
+    var BD = new EVM(this.ABC, Dimension.D1);
+    var fixedCoord;
+
+    ip = 0;
+    while (ip < this.NEV)
+    {
+        switch (this.ABC)
+        {
+            case EVM_Order.YXZ:
+            case EVM_Order.ZXY:
+                fixedCoord = this.v[ip].X;
+                break;
+            case EVM_Order.XYZ:
+            case EVM_Order.ZYX:
+                fixedCoord = this.v[ip].Y;
+                break;
+            case EVM_Order.XZY:
+            case EVM_Order.YZX:
+                fixedCoord = this.v[ip].Z;
+                break;
+        }
+        // dim = 2 is the actual dimension of the EVM to process
+        // readPlv will read a 1D-plv from the 2D-EVM where B is fixed
+        plv = this.readPlv(ip);
+        Sj = Si.mergeXOR1D(plv);
+        // dim = 1 is the dimension of Sj
+        // setCoordinate will set B as fixedCoord
+        //Si.setCoordinate(fixedCoord, 1);
+        Sj.setCoordinate(fixedCoord);
+
+        FD = Si.difference1D(Sj);
+        BD = Sj.difference1D(Si);
+
+        FD.setCoordinate(fixedCoord);
+        BD.setCoordinate(fixedCoord);
+
+        // Aqui hay que agregar los edges en la dirección correcta
+        FD.addEdges(edges, true);
+        BD.addEdges(edges, false);
+        // --------
+
+        Si = Sj;
+    }
+    return(edges);
+};
+
+
+// Compute the faces of an obj pointing to direction dir from an EVM
+// tess: 0 = no tess, 1 = triangles, 2 = squares
+EVM.prototype.computeFaces2D = function (obj, dir, tess)
+{
+    var ip;
+    var Si = new EVM(this.ABC, Dimension.D2);
+    var Sj = new EVM(this.ABC, Dimension.D2);
+    var plv = new EVM(this.ABC, Dimension.D2);
+    var FD = new EVM(this.ABC, Dimension.D2);
+    var BD = new EVM(this.ABC, Dimension.D2);
+    var fixedCoord;
+    var ACB;
+    var edges = new Array();
+    var facesFD = new Array();
+    var facesBD = new Array();// 
+    // Ordered Faces
+
+    switch (this.ABC)
+    {
+        case EVM_Order.XYZ:
+            this.ACB = EVM_Order.XZY;
+            break;
+        case EVM_Order.XZY:
+            this.ACB = EVM_Order.XYZ;
+            break;
+        case EVM_Order.YXZ:
+            this.ACB = EVM_Order.YZX;
+            break;
+        case EVM_Order.YZX:
+            this.ACB = EVM_Order.YXZ;
+            break;
+        case EVM_Order.ZXY:
+            this.ACB = EVM_Order.ZYX;
+            break;
+        case EVM_Order.ZYX:
+            this.ACB = EVM_Order.ZXY;
+            break;
+    }
+
+    ip = 0;
+
+    while (ip < this.NEV)
+    {
+        switch (this.ABC)
+        {
+            case EVM_Order.XYZ:
+            case EVM_Order.XZY:
+                fixedCoord = this.v[ip].X;
+                break;
+            case EVM_Order.YXZ:
+            case EVM_Order.YZX:
+                fixedCoord = this.v[ip].Y;
+                break;
+            case EVM_Order.ZXY:
+            case EVM_Order.ZYX:
+                fixedCoord = this.v[ip].Z;
+                break;
+        }
+        // Read plv
+        plv = this.readPlv(ip);
+
+        Sj = Si.mergeXOR2D(plv);
+        Si.setCoordinate(fixedCoord);
+        Sj.setCoordinate(fixedCoord);
+
+        FD = Si.difference(Sj);
+        BD = Sj.difference(Si);
+        FD.setCoordinate(fixedCoord);
+        BD.setCoordinate(fixedCoord);
+
+        if (FD.NEV > 0)
+        {
+            // Already in ABC order
+            edges = FD.computeEdges1D(dir);
+            facesFD.splice(facesFD.length, 0, edges);
+
+            FD.order(ACB);
+            edges = FD.computeEdges1D(!dir);
+            facesFD.splice(facesFD.length, 0, edges);
+        }
+        if (BD.NEV > 0)
+        {
+            // Already in ABC order
+            edges = BD.computeEdges1D(!dir);
+            facesBD.splice(facesBD.length, 0, edges);
+
+            BD.order(ACB);
+            edges = BD.computeEdges1D(dir);
+            facesBD.splice(facesBD.length, 0, edges);
+        }
+
+        this.orderEdges(facesFD);
+        this.orderEdges(facesBD);
+
+        this.insertFacesInObject(obj, facesFD, dir, tess);
+        this.insertFacesInObject(obj, facesBD, !dir, tess);
+        facesFD.splice(0);
+        facesBD.splice(0);
+
+        Si = Sj;
+    }
+};
+
+EVM.prototype.getObject = function (tess)
+{
+    var dir = true;
+    var obj;
+    var ord = this.ABC; // Original order on EVM
+
+    this.order(EVM_Order.XYZ);
+    this.computeFaces2D(obj, dir, tess);
+    this.order(EVM_Order.YZX);
+    this.computeFaces2D(obj, dir, tess);
+    this.order(EVM_Order.ZXY);
+    this.computeFaces2D(obj, dir, tess);
+
+    this.order(ord);          // Return EVM to original order
+
+    return(obj);
+};
+
+EVM.prototype.getObjectSlice = function (tess, fixed)
+{
+    var dir = true;
+    var obj;
+    var ord = this.ABC; // Original order on EVM
+
+    switch (fixed)
+    {
+        case 'x':
+        case 'X':
+            this.order(EVM_Order.XYZ);
+            this.computeFaces2D(obj, dir, tess);
+            break;
+        case 'y':
+        case 'Y':
+            this.order(EVM_Order.YZX);
+            this.computeFaces2D(obj, dir, tess);
+            break;
+        case 'z':
+        case 'Z':
+            this.order(EVM_Order.ZXY);
+            this.computeFaces2D(obj, dir, tess);
+            break;
+        default:
+            this.order(EVM_Order.XYZ);
+            this.computeFaces2D(obj, dir, tess);
+    }
+
+    this.order(ord);          // Return EVM to original order
+
+    return(obj);
+};
+
+EVM.prototype.minPoint = function ()
+{
+    var i;
+    var p = new Point3D(0, 0, 0);
+    for (i = 0; i < this.NEV; i++)
+    {
+        if (this.v[i].X < p.X || (this.v[i].X === p.X && (this.v[i].Y < p.Y || (this.v[i].Y === p.Y && this.v[i].Z < p.Z))))
+            p = this.v[i];
+    }
+    return(p);
+};
+
+EVM.prototype.maxPoint = function ()
+{
+    var i;
+    var p = new Point3D(0, 0, 0);
+    for (i = 0; i < this.NEV; i++)
+    {
+        if (this.v[i].X > p.X || (this.v[i].X === p.X && (this.v[i].Y > p.Y || (this.v[i].Y === p.Y && this.v[i].Z > p.Z))))
+            p = this.v[i];
+    }
+    return(p);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

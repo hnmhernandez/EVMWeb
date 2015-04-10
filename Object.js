@@ -678,7 +678,7 @@ Object.prototype.transladar = function (tx, ty, tz) {
 //  -sx: Escalar X
 //  -sy: Escalar Y
 //  -sz: Escalar Z
-Object.prototype.transladar = function (sx, sy, sz) {
+Object.prototype.escalar = function (sx, sy, sz) {
     var i;
     for (i = 0; i < this.NV; i++) {
         this.V[i].scale(sx, sy, sz);
