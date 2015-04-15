@@ -13,7 +13,7 @@ var Dimension = {D1: 1, D2: 2, D3: 3};
 var NEV;    //Numero de vertices extremos
 var v;      //Vectores de vertices extremos
 var ABC;    //ABC_sort
-var dim;    //Dimensiï¿½n del EVM
+var dim;    //Dimension del EVM
 
 var EVMFileOutput;
 
@@ -83,8 +83,10 @@ function EVMFile(filename) {
         this.EVMFileOutput = new EVMWithExVert(exVert, ord, d);
 
         /***********PRUEBA CON ARCHIVOS********************/
-        var b = new EVMCopy (this.EVMFileOutput);
-        console.log(this.EVMFileOutput.collide(b));
+
+        console.log(this.EVMFileOutput);
+        var obj = this.EVMFileOutput.getObject(1);
+        console.log(obj);
     };
     lector.readAsText(filename[0]);
 
@@ -1040,7 +1042,7 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
             {
                 while (ia < this.NEV && !fromB)
                 {
-                    plv = readPlv(true);
+                    plv = this.readPlv(true);
                     sA = sA.getSection(plv);
                     sCprev = sCcurr;
                     sCcurr = sA;
@@ -1073,7 +1075,7 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
 //dim = 2: extraer una linea desde un plano
 EVM.prototype.readPlv = function (esA) {
     var plv = new EVM(this.ABC, Dimension.D3);
-    var fixedCoord;
+    var fixedCoord = 0;
     var valor;
 
     if (esA) {
@@ -1081,6 +1083,7 @@ EVM.prototype.readPlv = function (esA) {
     } else {
         valor = ib;
     }
+    this.dim = Dimension.D3;
 
     plv.ABC = this.ABC;
     switch (this.dim) {
@@ -1131,7 +1134,12 @@ EVM.prototype.readPlv = function (esA) {
                     break;
                 case EVM_Order.XYZ:
                 case EVM_Order.ZYX:
+                    console.log(this.v);
+//                    if (typeof this.v[valor] !== "undefined") {
+                    console.log(this.v[valor]);
                     fixedCoord = this.v[valor].Y;
+//                    }
+                    console.log(valor + " " + this.NEV + " " + this + " " + fixedCoord);
                     while (valor < this.NEV && this.v[valor].Y === fixedCoord)
                     {
                         plv.putExtremeVertex(this.v[valor]);
@@ -1155,6 +1163,7 @@ EVM.prototype.readPlv = function (esA) {
         ia = valor;
     } else {
         ib = valor;
+        console.log("ib " + ib);
     }
     return (plv);
 };
@@ -1607,7 +1616,7 @@ EVM.prototype.operation = function (B, op)
             case 3:
                 while (ia < this.NEV)
                 {
-                    plv = readPlv(true);
+                    plv = this.readPlv(true);
                     C.putPlv(plv);
                 }
                 break;
@@ -1615,7 +1624,7 @@ EVM.prototype.operation = function (B, op)
             case 4:
                 while (ia < this.NEV)
                 {
-                    plv = readPlv(true);
+                    plv = this.readPlv(true);
                     C.putPlv(plv);
                 }
                 while (ib < B.NEV)
@@ -1645,32 +1654,40 @@ EVM.prototype.collide = function (B)
 // Retorna la union entre EVMs
 EVM.prototype.unite = function (B)
 {
-    if (this.dim === B.dim)
+    if (this.dim === B.dim) {
         return(this.operation(B, 4));
-
-    cerr << "Error: The dimensions of A and B do not match." << endl;
-    var C = new EVM(this.ABC, this.dim);
-    return(C);
+    }
+    else {
+        console.log("Error: The dimensions of A and B do not match.");
+        var C = new EVM(this.ABC, this.dim);
+        return(C);
+    }
 };
 
 // Retorna la interseccion entre EVMs 3D
 EVM.prototype.intersection = function (B)
 {
-    if (this.dim === B.dim)
+    if (this.dim === B.dim) {
         return(this.operation(B, 1));
-    cerr << "Error: The dimensions of A and B do not match." << endl;
-    var C = new EVM(this.ABC, this.dim);
-    return(C);
+    }
+    else {
+        console.log("Error: The dimensions of A and B do not match.");
+        var C = new EVM(this.ABC, this.dim);
+        return(C);
+    }
 };
 
 // Returns difference between 3D EVMs
 EVM.prototype.difference = function (B)
 {
-    if (this.dim === B.dim)
+    if (this.dim === B.dim) {
         return(this.operation(B, 3));
-    cerr << "Error: The dimensions of A and B do not match." << endl;
-    var C = new EVM(this.ABC, this.dim);
-    return(C);
+    }
+    else {
+        console.log("Error: The dimensions of A and B do not match.");
+        var C = new EVM(this.ABC, this.dim);
+        return(C);
+    }
 };
 
 // Translada todos los vertices de un EVM
@@ -1697,8 +1714,8 @@ EVM.prototype.addEdges = function (edges, dir)
         i = 0;
         while (i < this.NEV)
         {
-            line.p1 = v[i];
-            line.p2 = v[i + 1];
+            line.P1 = this.v[i];
+            line.P2 = this.v[i + 1];
             edges.push(line);
             i = i + 2;
         }
@@ -1708,8 +1725,8 @@ EVM.prototype.addEdges = function (edges, dir)
         i = this.NEV - 1;
         while (i >= 0)
         {
-            line.p1 = v[i];
-            line.p2 = v[i - 1];
+            line.P1 = this.v[i];
+            line.P2 = this.v[i - 1];
             edges.push(line);
             i = i - 2;
         }
@@ -1719,6 +1736,8 @@ EVM.prototype.addEdges = function (edges, dir)
 // Order as a face the vector of edges
 EVM.prototype.orderEdges = function (edges)
 {
+    console.log("EL EDGE");
+    console.log(edges[0].P1);
     var i, j, dira, dirb, band, ini;
     var aux = new Line3Dnull();
 
@@ -1853,6 +1872,8 @@ EVM.prototype.tesselateFace = function ()
 // tess: 0 = no tess, 1 = triangles, 2 = squares
 EVM.prototype.insertFacesInObject = function (obj, faces, dir, tess)
 {
+    console.log("FACES");
+    console.log(faces);
     // If   faces is 1-2, 2-3, 3-4, 4-1, 5-6, 6-7, 7-8, 8-5:
     // 
     //  4---3   8---7
@@ -1968,35 +1989,33 @@ EVM.prototype.insertFacesInObject = function (obj, faces, dir, tess)
 EVM.prototype.computeEdges1D = function (dir)
 {
     var edges = new Array();
-    var ip;
     var Si = new EVM(this.ABC, Dimension.D1);
     var Sj = new EVM(this.ABC, Dimension.D1);
     var plv = new EVM(this.ABC, Dimension.D1);
     var FD = new EVM(this.ABC, Dimension.D1);
     var BD = new EVM(this.ABC, Dimension.D1);
     var fixedCoord;
-
-    ip = 0;
-    while (ip < this.NEV)
+    ib = 0;
+    while (ib < this.NEV)
     {
         switch (this.ABC)
         {
             case EVM_Order.YXZ:
             case EVM_Order.ZXY:
-                fixedCoord = this.v[ip].X;
+                fixedCoord = this.v[ib].X;
                 break;
             case EVM_Order.XYZ:
             case EVM_Order.ZYX:
-                fixedCoord = this.v[ip].Y;
+                fixedCoord = this.v[ib].Y;
                 break;
             case EVM_Order.XZY:
             case EVM_Order.YZX:
-                fixedCoord = this.v[ip].Z;
+                fixedCoord = this.v[ib].Z;
                 break;
         }
         // dim = 2 is the actual dimension of the EVM to process
         // readPlv will read a 1D-plv from the 2D-EVM where B is fixed
-        plv = this.readPlv(ip);
+        plv = this.readPlv(false);
         Sj = Si.mergeXOR1D(plv);
         // dim = 1 is the dimension of Sj
         // setCoordinate will set B as fixedCoord
@@ -2010,8 +2029,8 @@ EVM.prototype.computeEdges1D = function (dir)
         BD.setCoordinate(fixedCoord);
 
         // Aqui hay que agregar los edges en la dirección correcta
-        FD.addEdges(edges, true);
-        BD.addEdges(edges, false);
+        FD.addEdges(edges, dir);
+        BD.addEdges(edges, !dir);
         // --------
 
         Si = Sj;
@@ -2024,7 +2043,6 @@ EVM.prototype.computeEdges1D = function (dir)
 // tess: 0 = no tess, 1 = triangles, 2 = squares
 EVM.prototype.computeFaces2D = function (obj, dir, tess)
 {
-    var ip;
     var Si = new EVM(this.ABC, Dimension.D2);
     var Sj = new EVM(this.ABC, Dimension.D2);
     var plv = new EVM(this.ABC, Dimension.D2);
@@ -2040,47 +2058,46 @@ EVM.prototype.computeFaces2D = function (obj, dir, tess)
     switch (this.ABC)
     {
         case EVM_Order.XYZ:
-            this.ACB = EVM_Order.XZY;
+            ACB = EVM_Order.XZY;
             break;
         case EVM_Order.XZY:
-            this.ACB = EVM_Order.XYZ;
+            ACB = EVM_Order.XYZ;
             break;
         case EVM_Order.YXZ:
-            this.ACB = EVM_Order.YZX;
+            ACB = EVM_Order.YZX;
             break;
         case EVM_Order.YZX:
-            this.ACB = EVM_Order.YXZ;
+            ACB = EVM_Order.YXZ;
             break;
         case EVM_Order.ZXY:
-            this.ACB = EVM_Order.ZYX;
+            ACB = EVM_Order.ZYX;
             break;
         case EVM_Order.ZYX:
-            this.ACB = EVM_Order.ZXY;
+            ACB = EVM_Order.ZXY;
             break;
     }
 
-    ip = 0;
+    ib = 0;
 
-    while (ip < this.NEV)
+    while (ib < this.NEV)
     {
         switch (this.ABC)
         {
             case EVM_Order.XYZ:
             case EVM_Order.XZY:
-                fixedCoord = this.v[ip].X;
+                fixedCoord = this.v[ib].X;
                 break;
             case EVM_Order.YXZ:
             case EVM_Order.YZX:
-                fixedCoord = this.v[ip].Y;
+                fixedCoord = this.v[ib].Y;
                 break;
             case EVM_Order.ZXY:
             case EVM_Order.ZYX:
-                fixedCoord = this.v[ip].Z;
+                fixedCoord = this.v[ib].Z;
                 break;
         }
         // Read plv
-        plv = this.readPlv(ip);
-
+        plv = this.readPlv(false);
         Sj = Si.mergeXOR2D(plv);
         Si.setCoordinate(fixedCoord);
         Sj.setCoordinate(fixedCoord);
@@ -2094,23 +2111,25 @@ EVM.prototype.computeFaces2D = function (obj, dir, tess)
         {
             // Already in ABC order
             edges = FD.computeEdges1D(dir);
-            facesFD.splice(facesFD.length, 0, edges);
+            for (var i = 0; i < edges.length; i++)
+                facesFD.push(edges[i]);
 
             FD.order(ACB);
             edges = FD.computeEdges1D(!dir);
-            facesFD.splice(facesFD.length, 0, edges);
+            for (var i = 0; i < edges.length; i++)
+                facesFD.push(edges[i]);
         }
         if (BD.NEV > 0)
         {
             // Already in ABC order
             edges = BD.computeEdges1D(!dir);
-            facesBD.splice(facesBD.length, 0, edges);
-
+            for (var i = 0; i < edges.length; i++)
+                facesBD.push(edges[i]);
             BD.order(ACB);
             edges = BD.computeEdges1D(dir);
-            facesBD.splice(facesBD.length, 0, edges);
+            for (var i = 0; i < edges.length; i++)
+                facesBD.push(edges[i]);
         }
-
         this.orderEdges(facesFD);
         this.orderEdges(facesBD);
 
@@ -2126,7 +2145,7 @@ EVM.prototype.computeFaces2D = function (obj, dir, tess)
 EVM.prototype.getObject = function (tess)
 {
     var dir = true;
-    var obj;
+    var obj = new Object(1, 1, 0);
     var ord = this.ABC; // Original order on EVM
 
     this.order(EVM_Order.XYZ);
