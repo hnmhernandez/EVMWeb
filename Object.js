@@ -151,7 +151,7 @@ Object.prototype.puntoEnTriangulo = function (a, b, c, p) {
     }
 };
 
-//Möller's fast triangle - Detección de colisión de triangulos
+//Möller's fast triangle - Deteccion de colision de triangulos
 Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
     var i, vof;
     var v0, v1, v2; //Para buscar intervalos
@@ -159,8 +159,8 @@ Object.prototype.trianguloEnTriangulo = function (A1, B1, C1, A2, B2, C2) {
     var N1, N2; //Normales de T1 y T2
     var vt1 = new Array(3), vt2 = new Array(3);    //Vertices de los triangulos T1 y T2
     var dt1 = new Array(3), dt2 = new Array(3);    //Distancia desde los vertices para el plano de T1 y T2
-    var pt1 = new Array(3), pt2 = new Array(3);    //Proyección de los vertices dentro de la linea de intersección
-    var D;  //D= N1 x N2 es la dirección de la linea de intersección L
+    var pt1 = new Array(3), pt2 = new Array(3);    //Proyeccion de los vertices dentro de la linea de intersección
+    var D;  //D= N1 x N2 es la dirección de la linea de interseccion L
     var it1 = new Array(2), it2 = new Array(2);     //Intervalos de T1 y T2
     var T1 = new PlaneWithPoints3D(A1, B1, C1);     //Triangulos T1 y T2
     var T2 = new PlaneWithPoints3D(A2, B2, C2);
@@ -626,7 +626,7 @@ Object.prototype.nuevaCara = function (f) {
     return (this.F.length - 1);
 };
 
-//Rotar todos los verticas de un objecto a lo largo de un eje
+//Rotar todos los vertices de un objecto a lo largo de un eje
 //Entrada;
 //  -angDeg: Angulo en grados
 //  -axis:  eje en rotacion

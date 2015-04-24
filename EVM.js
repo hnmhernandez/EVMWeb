@@ -86,7 +86,7 @@ function EVMFile(filename) {
 
         console.log(this.EVMFileOutput);
         var obj = this.EVMFileOutput.getObject(1);
-        console.log(obj);
+//        console.log(obj);
     };
     lector.readAsText(filename[0]);
 
@@ -1737,7 +1737,7 @@ EVM.prototype.addEdges = function (edges, dir)
 EVM.prototype.orderEdges = function (edges)
 {
     console.log("EL EDGE");
-    console.log(edges[0].P1);
+    console.log(edges);
     var i, j, dira, dirb, band, ini;
     var aux = new Line3Dnull();
 
@@ -1872,8 +1872,6 @@ EVM.prototype.tesselateFace = function ()
 // tess: 0 = no tess, 1 = triangles, 2 = squares
 EVM.prototype.insertFacesInObject = function (obj, faces, dir, tess)
 {
-    console.log("FACES");
-    console.log(faces);
     // If   faces is 1-2, 2-3, 3-4, 4-1, 5-6, 6-7, 7-8, 8-5:
     // 
     //  4---3   8---7
@@ -1891,7 +1889,7 @@ EVM.prototype.insertFacesInObject = function (obj, faces, dir, tess)
     // |     |       |     |
     // 1-----2       1-----2
     //
-    var i, j, ini, k;
+    var i, j, ini;
     var face = new EVM(EVM_Order.XYZ, Dimension.D2);
     var tfaces = new Array();
     var edges = new Array();
@@ -1910,8 +1908,16 @@ EVM.prototype.insertFacesInObject = function (obj, faces, dir, tess)
         // Extract Face
         do
         {
+            console.log("FACES");
+            
+            console.log(faces.length);
             face.putExtremeVertex(faces[i].P1);
             i++;
+            console.log("FACES i-1");
+            console.log(faces[i - 1].P2);
+            
+            console.log("FACES ini");
+            console.log(faces[ini].P1 !== faces[ini].P1);
         } while (faces[i - 1].P2 !== faces[ini].P1);
         ini = i;
 
@@ -2118,6 +2124,10 @@ EVM.prototype.computeFaces2D = function (obj, dir, tess)
             edges = FD.computeEdges1D(!dir);
             for (var i = 0; i < edges.length; i++)
                 facesFD.push(edges[i]);
+            console.log("facesFD[0]");
+            console.log(facesFD[0]);
+            this.orderEdges(facesFD);
+            this.insertFacesInObject(obj, facesFD, dir, tess);
         }
         if (BD.NEV > 0)
         {
@@ -2129,12 +2139,14 @@ EVM.prototype.computeFaces2D = function (obj, dir, tess)
             edges = BD.computeEdges1D(dir);
             for (var i = 0; i < edges.length; i++)
                 facesBD.push(edges[i]);
+            this.orderEdges(facesBD);
+            this.insertFacesInObject(obj, facesBD, !dir, tess);
         }
-        this.orderEdges(facesFD);
-        this.orderEdges(facesBD);
 
-        this.insertFacesInObject(obj, facesFD, dir, tess);
-        this.insertFacesInObject(obj, facesBD, !dir, tess);
+
+
+
+
         facesFD.splice(0);
         facesBD.splice(0);
 
