@@ -86,7 +86,8 @@ function EVMFile(filename, callback) {
         /***********PRUEBA CON ARCHIVOS********************/
         console.log(evmResult);
         if(callback){
-           return callback.call(this, evmResult);
+           //return callback.call(this, evmResult);
+           callback.call(this, evmResult);
         }
     };
     lector.readAsText(filename[0]);
@@ -2034,7 +2035,7 @@ EVM.prototype.computeEdges1D = function (dir)
         FD.setCoordinate(fixedCoord);
         BD.setCoordinate(fixedCoord);
 
-        // Aqui hay que agregar los edges en la dirección correcta
+        // Aqui hay que agregar los edges en la direcciÃ³n correcta
         FD.addEdges(edges, dir);
         BD.addEdges(edges, !dir);
         // --------
