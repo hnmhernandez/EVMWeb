@@ -516,9 +516,24 @@ function webGLStart() {
 
 /******************************************************************************/
 
-
+var evm1 = null;
+var evm2 = null;
 function procesar() {
-    var evm1 = new EVMFile(document.getElementById("fileEVM").files, function (evm1) {
-        console.log(evm1);
+    //var evm1 = new EVMFile(document.getElementById("fileEVM").files, function (evm1) {
+    //    console.log(evm1);
+    //});
+    new EVMFile(document.getElementById("fileEVM").files, function (evmResult) {
+        evm1 = evmResult;
+        
+        new EVMFile(document.getElementById("fileEVM2").files, function (evmResult) {
+            evm2 = evmResult;
+            evm1.Intersection(evm2);
+        });
+        
     });
+    
+    
+    
+    
+    
 }
