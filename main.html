@@ -44,6 +44,7 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
         <script src="Plane.js"></script>
         <script src="Object.js"></script>
         <script src="EVM.js"></script>  
+        <script src="TestScript.js"></script>  
 
     </head>
     <body onload="webGLStart()">
@@ -54,6 +55,8 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
         <input type="file" id="file" name="file" onchange="ObjectFile(this.files, false)"/>
         
         <h2>EVM File:</h2>
-        <input type="file" id="fileEVM" name="fileEVM" onchange="EVMFile(this.files, false)"/>
+        <!--<input type="file" id="fileEVM" multiple="true" name="fileEVM[]" onchange="EVMFile(this.files)"/>-->
+        <input type="file" id="fileEVM" multiple="true" name="fileEVM[]"/>
+        <button id="process" onclick="procesar()">Procesar</button>
     </body>
 </html>
