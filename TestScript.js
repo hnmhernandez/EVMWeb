@@ -524,16 +524,33 @@ function procesar() {
     //});
     new EVMFile(document.getElementById("fileEVM").files, function (evmResult) {
         evm1 = evmResult;
-        
+
         new EVMFile(document.getElementById("fileEVM2").files, function (evmResult) {
             evm2 = evmResult;
-            evm1.Intersection(evm2);
+            var evmTotal = new EVM(0, 0);
+            console.log("EVM 1");
+            console.log(evm1);
+            console.log("EVM 2");
+            console.log(evm2);
+            if (document.getElementsByName("operation")[0].checked) {
+                console.log("Result Intersection");
+                evmTotal = evm1.intersection(evm2);
+                console.log(evmTotal);
+            } else if (document.getElementsByName("operation")[1].checked) {
+                console.log("Result Difference");
+                evmTotal = evm1.difference(evm2);
+                console.log(evmTotal);
+            } else if (document.getElementsByName("operation")[2].checked) {
+                console.log("Result Union");
+                evmTotal = evm1.unite(evm2);
+                console.log(evmTotal);
+                ;
+            } else if (document.getElementsByName("operation")[3].checked) {
+                console.log("Result Collision");
+                evmTotal = evm1.collide(evm2);
+                console.log(evmTotal);
+            }
+            console.log("--------------------------");
         });
-        
     });
-    
-    
-    
-    
-    
 }

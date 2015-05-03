@@ -17,7 +17,6 @@ var dim;    //Dimension del EVM
 
 var EVMFileOutput;
 
-
 //Constructores
 function EVM(ord, d) {
     this.NEV = 0;
@@ -82,12 +81,8 @@ function EVMFile(filename, callback) {
             exVert.push(vertex);
         }
         evmResult = new EVMWithExVert(exVert, ord, d);
-
-        /***********PRUEBA CON ARCHIVOS********************/
-        console.log(evmResult);
-        if(callback){
-           //return callback.call(this, evmResult);
-           callback.call(this, evmResult);
+        if (callback) {
+            callback.call(this, evmResult);
         }
     };
     lector.readAsText(filename[0]);
@@ -257,15 +252,12 @@ EVM.prototype.collision = function (B) {
     var sCcurr = new EVM(B.ABC, Dimension.D2);
     var sCprev = new EVM(B.ABC, Dimension.D2);
     var plv = new EVM(B.ABC, Dimension.D2);
-    fromA = false, fromB = false;
-    coord = 0;
     var aOrd = this.ABC;
 
     if (this.ABC !== B.ABC)
         this.order(B.ABC);
 
     if (this.dim === 1) {
-        console.log("ENTRO AQUI al caso base");
         C = this.collision1D(B);
     } else {
         if (this.dim === Dimension.D2) {
@@ -755,7 +747,6 @@ EVM.prototype.mergeXOR3D = function (B)
     return(C);
 };
 
-// Retorna la diferencia entre EVMs 3D
 EVM.prototype.mergeXOR = function (B)
 {
     var C = new EVM(this.ABC, this.dim);
@@ -776,7 +767,7 @@ EVM.prototype.mergeXOR = function (B)
     }
     else
     {
-        cerr << "Error: The dimensions of A and B do not match." << endl;
+        console.log("Error: The dimensions of A and B do not match.");
     }
     return(C);
 };
@@ -994,7 +985,7 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
             if (!fromA || !fromB) {
                 if (fromA) {   //fromA = this.v
                     while (ia < this.NEV && !fromB) {
-                        plv = readPlv(true);
+                        plv = this.readPlv(true);
                         sA = sA.getSection(plv);
                         this.nextObject(B, ia, ib);
                     }
@@ -1075,8 +1066,8 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
 //dim = 3: extraer un plano desde un objecto
 //dim = 2: extraer una linea desde un plano
 EVM.prototype.readPlv = function (esA) {
-    var plv = new EVM(this.ABC, Dimension.D3);
-    var fixedCoord = 0;
+    var plv = new EVM(0, 0);
+    var fixedCoord;
     var valor;
 
     if (esA) {
@@ -1084,7 +1075,6 @@ EVM.prototype.readPlv = function (esA) {
     } else {
         valor = ib;
     }
-    this.dim = Dimension.D3;
 
     plv.ABC = this.ABC;
     switch (this.dim) {
@@ -1135,12 +1125,7 @@ EVM.prototype.readPlv = function (esA) {
                     break;
                 case EVM_Order.XYZ:
                 case EVM_Order.ZYX:
-                    console.log(this.v);
-//                    if (typeof this.v[valor] !== "undefined") {
-                    console.log(this.v[valor]);
                     fixedCoord = this.v[valor].Y;
-//                    }
-                    console.log(valor + " " + this.NEV + " " + this + " " + fixedCoord);
                     while (valor < this.NEV && this.v[valor].Y === fixedCoord)
                     {
                         plv.putExtremeVertex(this.v[valor]);
@@ -1164,7 +1149,6 @@ EVM.prototype.readPlv = function (esA) {
         ia = valor;
     } else {
         ib = valor;
-        console.log("ib " + ib);
     }
     return (plv);
 };
@@ -1533,6 +1517,8 @@ EVM.prototype.putPlv = function (plv) {
 // 2 = MergeXOR
 // 3 = Difference
 // 4 = Union
+var fromA, fromB;
+var coord;
 EVM.prototype.operation = function (B, op)
 {
     var C = new EVM(B.ABC, this.dim);
@@ -1541,9 +1527,6 @@ EVM.prototype.operation = function (B, op)
     var sCcurr = new EVM(B.ABC, Dimension.D2);
     var sCprev = new EVM(B.ABC, Dimension.D2);
     var plv = new EVM(B.ABC, Dimension.D2);
-    fromA = false, fromB = false;
-    ia = 0, ib = 0;
-    coord = 0;
     var aOrd = this.ABC;
 
     // A, B and C share order
@@ -1582,6 +1565,7 @@ EVM.prototype.operation = function (B, op)
         ib = 0;
         this.nextObject(B, ia, ib);
         this.improve(B, op, plv, sA, sB, C, sCprev, sCcurr);
+
         while (ia < this.NEV && ib < B.NEV)
         {
             if (fromA)
@@ -1596,8 +1580,9 @@ EVM.prototype.operation = function (B, op)
             }
             sCprev = sCcurr;
 
-            if (op !== 2)
-                sCcurr = sA.operation(sB, op); // Recursive call
+            if (op !== 2) {
+                sCcurr = sA.operation(sB, op);
+            } // Recursive call
             else // mergeXor
             {
                 if (this.dim === Dimension.D3)
@@ -1612,6 +1597,7 @@ EVM.prototype.operation = function (B, op)
 
             this.nextObject(B, ia, ib);
         }
+
         switch (op)
         {
             case 3:
@@ -1737,8 +1723,6 @@ EVM.prototype.addEdges = function (edges, dir)
 // Order as a face the vector of edges
 EVM.prototype.orderEdges = function (edges)
 {
-    console.log("EL EDGE");
-    console.log(edges);
     var i, j, dira, dirb, band, ini;
     var aux = new Line3Dnull();
 
@@ -1909,16 +1893,8 @@ EVM.prototype.insertFacesInObject = function (obj, faces, dir, tess)
         // Extract Face
         do
         {
-            console.log("FACES");
-
-            console.log(faces.length);
             face.putExtremeVertex(faces[i].P1);
             i++;
-            console.log("FACES i-1");
-            console.log(faces[i - 1].P2);
-
-            console.log("FACES ini");
-            console.log(faces[ini].P1 !== faces[ini].P1);
         } while (faces[i - 1].P2 !== faces[ini].P1);
         ini = i;
 
@@ -2125,8 +2101,6 @@ EVM.prototype.computeFaces2D = function (obj, dir, tess)
             edges = FD.computeEdges1D(!dir);
             for (var i = 0; i < edges.length; i++)
                 facesFD.push(edges[i]);
-            console.log("facesFD[0]");
-            console.log(facesFD[0]);
             this.orderEdges(facesFD);
             this.insertFacesInObject(obj, facesFD, dir, tess);
         }
@@ -2143,11 +2117,6 @@ EVM.prototype.computeFaces2D = function (obj, dir, tess)
             this.orderEdges(facesBD);
             this.insertFacesInObject(obj, facesBD, !dir, tess);
         }
-
-
-
-
-
         facesFD.splice(0);
         facesBD.splice(0);
 

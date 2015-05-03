@@ -47,16 +47,34 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
         <script src="TestScript.js"></script>  
 
     </head>
-    <body onload="webGLStart()">
-        <canvas id="leccion1-canvas" width="640" height="480">
+    <!--<body onload="webGLStart()">-->
+        <body>
+        <!--<canvas id="leccion1-canvas" width="640" height="480">
             Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
-        </canvas>
+        </canvas>-->
         <h2>Object File:</h2>
         <input type="file" id="file" name="file" onchange="ObjectFile(this.files, false)"/>
-        
-        <h2>EVM File:</h2>
-        <!--<input type="file" id="fileEVM" multiple="true" name="fileEVM[]" onchange="EVMFile(this.files)"/>-->
-        <input type="file" id="fileEVM" multiple="true" name="fileEVM[]"/>
-        <button id="process" onclick="procesar()">Procesar</button>
-    </body>
+
+        <div id="EVM1">
+            <h2>EVM 1 File:</h2>
+            <input type="file" id="fileEVM" multiple="true" name="fileEVM[]"/>
+        </div>
+
+        <div id="EVM2">
+            <h2>EVM 2 File:</h2>
+            <input type="file" id="fileEVM2" multiple="true" name="fileEVM[]"/>
+        </div>
+
+        <div>
+            <label>Choose an operation:</label>
+            <input type="radio" name="operation" value="Intersection" id="Intersection"><label>Intersection</label>
+            <input type="radio" name="operation" value="Difference" id="Difference"><label>Difference</label>
+            <input type="radio" name="operation" value="Union" id="Union"><label>Union</label>
+            <input type="radio" name="operation" value="Collision" id="Collision"><label>Collision</label>
+        </div>
+    <center>
+        <button id="process" onclick="procesar()">Process</button>
+        <!--<button id="test" onclick="prueba()">test</button>-->
+    </center>
+</body>
 </html>
