@@ -270,8 +270,8 @@ EVM.prototype.collision = function (B) {
             sCprev.dim = Dimension.D1;
             plv.dim = Dimension.D1;
         }
-        objExtra.ia = 0;
-        objExtra.ib = 0;
+        extra.ia = 0;
+        extra.ib = 0;
         this.nextObject(B, extra);
         this.improve(B, 0, plv, sA, sB, C, sCprev, sCcurr, extra);
         while (C.NEV === 0 && extra.ia < this.NEV && extra.ib < B.NEV) {
@@ -978,6 +978,8 @@ EVM.prototype.nextObject = function (B, extra) {
             }
         }
     }
+    
+//    console.log("fromA " + extra.fromA + " fromB " + extra.fromB + "  coord " + extra.coord);
 };
 
 EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr, extra) {
@@ -1527,11 +1529,11 @@ var ia;
 var ib;
 
 function objExtra() {
-    this.fromA = false;
-    this.fromB = false;
-    this.coord = 0;
-    this.ia = 0;
-    this.ib = 0;
+    this.fromA = null;
+    this.fromB = null;
+    this.coord = null;
+    this.ia = null;
+    this.ib = null;
 }
 
 EVM.prototype.operation = function (B, op)
@@ -1644,7 +1646,7 @@ EVM.prototype.operation = function (B, op)
     // Return A to its original order
     if (this.ABC !== aOrd)
         this.order(aOrd);
-
+    
     return(C);
 };
 

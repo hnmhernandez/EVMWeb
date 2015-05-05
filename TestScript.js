@@ -528,7 +528,7 @@ function ejecutar(){
     arrayTime.length = 0;
     min = 0;
     max = 0;
-    var repeticion = 1   //Cantidad de repeticiones de procesar()
+    var repeticion = 1;   //Cantidad de repeticiones de procesar()
 
     /*Guardando opcion de area critica*/
     var areaCritica = document.getElementsByName("areaCritica")[0].checked;
@@ -545,7 +545,7 @@ function ejecutar(){
         }
         resultadoTotal = resultadoTotal/repeticion;
         console.log("Total: " + resultadoTotal);
-    }, 3000);
+    }, 5000);
 }
 
 function procesar(areaCritica) {
@@ -597,7 +597,7 @@ function procesar(areaCritica) {
                 //                console.log("Result Collision");
                 evmTotal = evm1.collision(evm2);
             }
-            console.log(evmTotal);
+//            console.log(evmTotal);
             var mark_end = performance.now();
             arrayTime.push((mark_end-mark_start) * 1000)
         });
