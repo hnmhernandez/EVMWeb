@@ -474,14 +474,14 @@ function pruebas() {
     console.log(object1.F[12]);
 
     console.log("Probando rotacion");
-//    object1.rotar(45, 'Z');
-//    console.log(object1.V[1]);
+    //    object1.rotar(45, 'Z');
+    //    console.log(object1.V[1]);
     console.log("Probando translacion");
-//    object1.transladar(45,45,45);
-//    console.log(object1.V[1]);
+    //    object1.transladar(45,45,45);
+    //    console.log(object1.V[1]);
     console.log("Probando escalado");
     object1.transladar(45, 45, 45);
-//    console.log(object1.V[1]);
+    //    console.log(object1.V[1]);
     console.log("Probando colision entre dos objectos");
     console.log(object2);
     if (object1.colision(object2)) {
@@ -502,55 +502,124 @@ function pruebas() {
 
 /**Iniciar WebGL apuntando al canvas del HTML**/
 function webGLStart() {
-//    var canvas = document.getElementById("leccion1-canvas");
+    //    var canvas = document.getElementById("leccion1-canvas");
     pruebas();
-//    initGL(canvas);
-//    initShaders();
-//    initBuffers();
-//
-//    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-//    gl.enable(gl.DEPTH_TEST);
-//
-//    drawScene();
+    //    initGL(canvas);
+    //    initShaders();
+    //    initBuffers();
+    //
+    //    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    //    gl.enable(gl.DEPTH_TEST);
+    //
+    //    drawScene();
 }
 
 /******************************************************************************/
 
 var evm1 = null;
 var evm2 = null;
-function procesar() {
-    //var evm1 = new EVMFile(document.getElementById("fileEVM").files, function (evm1) {
-    //    console.log(evm1);
-    //});
+var evm3 = null;
+var min, max, tx, ty, tz;
+
+var arrayTime = new Array();
+
+function ejecutar(){
+    /*Inicializando variables*/
+    arrayTime.length = 0;
+    min = 0;
+    max = 0;
+    var repeticion = 1   //Cantidad de repeticiones de procesar()
+
+    /*Guardando opcion de area critica*/
+    var areaCritica = document.getElementsByName("areaCritica")[0].checked;
+
+    for(var i=0 ;i<repeticion;i++){
+        procesar(areaCritica);
+    }
+
+    setTimeout(function(){
+        console.log(arrayTime);
+        var resultadoTotal = 0;
+        for(var i=0; i<arrayTime.length ; i++){
+            resultadoTotal = resultadoTotal + arrayTime[i];
+        }
+        resultadoTotal = resultadoTotal/repeticion;
+        console.log("Total: " + resultadoTotal);
+    }, 3000);
+}
+
+function procesar(areaCritica) {
     new EVMFile(document.getElementById("fileEVM").files, function (evmResult) {
         evm1 = evmResult;
 
         new EVMFile(document.getElementById("fileEVM2").files, function (evmResult) {
             evm2 = evmResult;
             var evmTotal = new EVM(0, 0);
-            console.log("EVM 1");
-            console.log(evm1);
-            console.log("EVM 2");
-            console.log(evm2);
+            //                        console.log("EVM 1");
+            //                        console.log(JSON.stringify(evm1));
+            //                        console.log("EVM 2");
+            //                        console.log(JSON.stringify(evm2));
+
+            /*Asignar Min y Max*/
+            min = evm1.minPoint();
+            max = evm1.maxPoint();          
+
+            /*Mover EVM1 si areaCritica es true o false*/
+            //            if(areaCritica){
+            //                do{
+            //                    tx = Math.floor((Math.random() * (max.X+1)));
+            //                    ty = Math.floor((Math.random() * (max.Y+1)));
+            //                    tz = Math.floor((Math.random() * (max.Z+1)));
+            //                    evm3 = evm2;
+            //                    evm3.translate(tx,ty,tz);
+            //                    console.log("EVM 3");
+            //                    console.log(evm3);
+            //                    console.log(evm1.collide(evm3));
+            //                }while(!evm1.collide(evm3));
+            //            }else{
+            //                tx = max.X + 10;
+            //                ty = max.Y + 10;
+            //                tz = max.Z + 10;
+            //                evm3 = evm2;
+            //                evm3.translate(tx,ty,tz);
+            //            }
+
+            var mark_start = performance.now();
             if (document.getElementsByName("operation")[0].checked) {
-                console.log("Result Intersection");
                 evmTotal = evm1.intersection(evm2);
-                console.log(evmTotal);
             } else if (document.getElementsByName("operation")[1].checked) {
-                console.log("Result Difference");
+                //                console.log("Result Difference");
                 evmTotal = evm1.difference(evm2);
-                console.log(evmTotal);
             } else if (document.getElementsByName("operation")[2].checked) {
-                console.log("Result Union");
+                //                console.log("Result Union");
                 evmTotal = evm1.unite(evm2);
-                console.log(evmTotal);
-                ;
             } else if (document.getElementsByName("operation")[3].checked) {
-                console.log("Result Collision");
-                evmTotal = evm1.collide(evm2);
-                console.log(evmTotal);
+                //                console.log("Result Collision");
+                evmTotal = evm1.collision(evm2);
             }
-            console.log("--------------------------");
+            console.log(evmTotal);
+            var mark_end = performance.now();
+            arrayTime.push((mark_end-mark_start) * 1000)
         });
     });
 }
+
+function prueba(){
+    var extra = new objExtra();
+
+    cambiarTodo(extra.ia, 0);
+
+    console.log(extra);
+}
+
+function cambiarTodo(objExtra, num){
+    if(objExtra === 10){
+        return;
+    }else{
+        console.log(objExtra);
+        objExtra = num; 
+        cambiarTodo(objExtra, objExtra+1);
+    }
+
+}
+

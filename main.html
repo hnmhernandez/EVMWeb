@@ -72,9 +72,11 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
             <input type="radio" name="operation" value="Union" id="Union"><label>Union</label>
             <input type="radio" name="operation" value="Collision" id="Collision"><label>Collision</label>
         </div>
+            
+            <input type="checkbox" name="areaCritica">Overlapping</input>
     <center>
-        <button id="process" onclick="procesar()">Process</button>
-        <!--<button id="test" onclick="prueba()">test</button>-->
+        <button id="process" onclick="ejecutar()">Process</button>
+        <button id="test" onclick="prueba()">test</button>
     </center>
 </body>
 </html>

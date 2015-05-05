@@ -80,6 +80,7 @@ function EVMFile(filename, callback) {
             vertex = new Point3D(parseFloat(verticesArray[0]), parseFloat(verticesArray[1]), parseFloat(verticesArray[2]));
             exVert.push(vertex);
         }
+
         evmResult = new EVMWithExVert(exVert, ord, d);
         if (callback) {
             callback.call(this, evmResult);
@@ -99,37 +100,37 @@ EVM.prototype.order = function (ord) {
     switch (ord) {
         case EVM_Order.XYZ:
             this.v.sort(function (a, b) {
-                return(a.X < b.X || (a.X === b.X && (a.Y < b.Y || (a.Y === b.Y && a.Z < b.Z))));
+                return (a.X < b.X || (a.X === b.X && (a.Y < b.Y || (a.Y === b.Y && a.Z < b.Z))))? -1 : 0;
             });
             break;
 
         case EVM_Order.XZY:
             this.v.sort(function (a, b) {
-                return(a.X < b.X || (a.X === b.X && (a.Z < b.Z || (a.Z === b.Z && a.Y < b.Y))));
+                return(a.X < b.X || (a.X === b.X && (a.Z < b.Z || (a.Z === b.Z && a.Y < b.Y))))? -1 : 0;
             });
             break;
 
         case EVM_Order.YXZ:
             this.v.sort(function (a, b) {
-                return(a.Y < b.Y || (a.Y === b.Y && (a.X < b.X || (a.X === b.X && a.Z < b.Z))));
+                return(a.Y < b.Y || (a.Y === b.Y && (a.X < b.X || (a.X === b.X && a.Z < b.Z))))? -1 : 0;
             });
             break;
 
         case EVM_Order.YZX:
             this.v.sort(function (a, b) {
-                return(a.Y < b.Y || (a.Y === b.Y && (a.Z < b.Z || (a.Z === b.Z && a.X < b.X))));
+                return(a.Y < b.Y || (a.Y === b.Y && (a.Z < b.Z || (a.Z === b.Z && a.X < b.X))))? -1 : 0;
             });
             break;
 
         case EVM_Order.ZXY:
             this.v.sort(function (a, b) {
-                return(a.Z < b.Z || (a.Z === b.Z && (a.X < b.X || (a.X === b.X && a.Y < b.Y))));
+                return(a.Z < b.Z || (a.Z === b.Z && (a.X < b.X || (a.X === b.X && a.Y < b.Y))))? -1 : 0;
             });
             break;
 
         case EVM_Order.ZYX:
             this.v.sort(function (a, b) {
-                return(a.Z < b.Z || (a.Z === b.Z && (a.Y < b.Y || (a.Y === b.Y && a.X < b.X))));
+                return(a.Z < b.Z || (a.Z === b.Z && (a.Y < b.Y || (a.Y === b.Y && a.X < b.X))))? -1 : 0;
             });
             break;
     }
@@ -254,6 +255,8 @@ EVM.prototype.collision = function (B) {
     var plv = new EVM(B.ABC, Dimension.D2);
     var aOrd = this.ABC;
 
+    var extra = new objExtra();
+
     if (this.ABC !== B.ABC)
         this.order(B.ABC);
 
@@ -267,27 +270,27 @@ EVM.prototype.collision = function (B) {
             sCprev.dim = Dimension.D1;
             plv.dim = Dimension.D1;
         }
-        ia = 0;
-        ib = 0;
-        this.nextObject(B, ia, ib);
-        this.improve(B, 0, plv, sA, sB, C, sCprev, sCcurr);
-        while (C.NEV === 0 && ia < this.NEV && ib < B.NEV) {
-            if (fromA) {
-                plv = this.readPlv(true);
+        objExtra.ia = 0;
+        objExtra.ib = 0;
+        this.nextObject(B, extra);
+        this.improve(B, 0, plv, sA, sB, C, sCprev, sCcurr, extra);
+        while (C.NEV === 0 && extra.ia < this.NEV && extra.ib < B.NEV) {
+            if (extra.fromA) {
+                plv = this.readPlv(true , extra);
                 sA = sA.getSection(plv);
             }
-            if (fromB) {
-                plv = B.readPlv(false);
+            if (extra.fromB) {
+                plv = B.readPlv(false, extra);
                 sB = sB.getSection(plv);
             }
             sCprev = sCcurr;
             sCcurr = sA.collision(sB);
 
             plv = sCprev.getPlv(sCcurr);
-            plv.setCoordinate(coord);
+            plv.setCoordinate(extra.coord);
             C.putPlv(plv);
 
-            this.nextObject(B, ia, ib);
+            this.nextObject(B, extra);
         }
     }
 
@@ -791,8 +794,8 @@ EVM.prototype.difference1D = function (B)
                 if (this.v[ia].X < B.v[ib].X)
                     aob = 1;
                 else
-                if (this.v[ia].X > B.v[ib].X)
-                    aob = 2;
+                    if (this.v[ia].X > B.v[ib].X)
+                        aob = 2;
                 else
                     aob = 3;
                 break;
@@ -801,8 +804,8 @@ EVM.prototype.difference1D = function (B)
                 if (this.v[ia].Y < B.v[ib].Y)
                     aob = 1;
                 else
-                if (this.v[ia].Y > B.v[ib].Y)
-                    aob = 2;
+                    if (this.v[ia].Y > B.v[ib].Y)
+                        aob = 2;
                 else
                     aob = 3;
                 break;
@@ -811,8 +814,8 @@ EVM.prototype.difference1D = function (B)
                 if (this.v[ia].Z < B.v[ib].Z)
                     aob = 1;
                 else
-                if (this.v[ia].Z > B.v[ib].Z)
-                    aob = 2;
+                    if (this.v[ia].Z > B.v[ib].Z)
+                        aob = 2;
                 else
                     aob = 3;
                 break;
@@ -877,33 +880,33 @@ EVM.prototype.difference1D = function (B)
     return(C);
 };
 
-EVM.prototype.nextObject = function (B, ia, ib) {
+EVM.prototype.nextObject = function (B, extra) {
     var inv = -1.7976931348623157e+308;
     var coorda = inv, coordb = inv;
     if (this.dim === Dimension.D3) {
         switch (this.ABC) {
             case EVM_Order.XYZ:
             case EVM_Order.XZY:
-                if (this.NEV > 0 && ia < this.NEV)
-                    coorda = this.v[ia].X;
-                if (B.NEV > 0 && ib < B.NEV)
-                    coordb = B.v[ib].X;
+                if (this.NEV > 0 && extra.ia < this.NEV)
+                    coorda = this.v[extra.ia].X;
+                if (B.NEV > 0 && extra.ib < B.NEV)
+                    coordb = B.v[extra.ib].X;
                 break;
 
             case EVM_Order.YXZ:
             case EVM_Order.YZX:
-                if (this.NEV > 0 && ia < this.NEV)
-                    coorda = this.v[ia].Y;
-                if (B.NEV > 0 && ib < B.NEV)
-                    coordb = B.v[ib].Y;
+                if (this.NEV > 0 && extra.ia < this.NEV)
+                    coorda = this.v[extra.ia].Y;
+                if (B.NEV > 0 && extra.ib < B.NEV)
+                    coordb = B.v[extra.ib].Y;
                 break;
 
             case EVM_Order.ZXY:
             case EVM_Order.ZYX:
-                if (this.NEV > 0 && ia < this.NEV)
-                    coorda = this.v[ia].Z;
-                if (B.NEV > 0 && ib < B.NEV)
-                    coordb = B.v[ib].Z;
+                if (this.NEV > 0 && extra.ia < this.NEV)
+                    coorda = this.v[extra.ia].Z;
+                if (B.NEV > 0 && extra.ib < B.NEV)
+                    coordb = B.v[extra.ib].Z;
                 break;
         }
     }
@@ -911,89 +914,88 @@ EVM.prototype.nextObject = function (B, ia, ib) {
         switch (this.ABC) {
             case EVM_Order.XYZ:
             case EVM_Order.ZYX:
-                if (this.NEV > 0 && ia < this.NEV)
-                    coorda = this.v[ia].Y;
-                if (B.NEV > 0 && ib < B.NEV)
-                    coordb = B.v[ib].Y;
+                if (this.NEV > 0 && extra.ia < this.NEV)
+                    coorda = this.v[extra.ia].Y;
+                if (B.NEV > 0 && extra.ib < B.NEV)
+                    coordb = B.v[extra.ib].Y;
                 break;
 
             case EVM_Order.XZY:
             case EVM_Order.YZX:
-                if (this.NEV > 0 && ia < this.NEV)
-                    coorda = this.v[ia].Z;
-                if (B.NEV > 0 && ib < B.NEV)
-                    coordb = B.v[ib].Z;
+                if (this.NEV > 0 && extra.ia < this.NEV)
+                    coorda = this.v[extra.ia].Z;
+                if (B.NEV > 0 && extra.ib < B.NEV)
+                    coordb = B.v[extra.ib].Z;
                 break;
 
             case EVM_Order.YXZ:
             case EVM_Order.ZXY:
-                if (this.NEV > 0 && ia < this.NEV)
-                    coorda = this.v[ia].X;
-                if (B.NEV > 0 && ib < B.NEV)
-                    coordb = B.v[ib].X;
+                if (this.NEV > 0 && extra.ia < this.NEV)
+                    coorda = this.v[extra.ia].X;
+                if (B.NEV > 0 && extra.ib < B.NEV)
+                    coordb = B.v[extra.ib].X;
                 break;
         }
     }
     if (coorda !== inv && coordb !== inv) {
         if (coorda < coordb) {
-            fromA = true;
-            fromB = false;
-            coord = coorda;
+            extra.fromA = true;
+            extra.fromB = false;
+            extra.coord = coorda;
         }
         else {
             if (coorda > coordb) {
-                fromA = false;
-                fromB = true;
-                coord = coordb;
+                extra.fromA = false;
+                extra.fromB = true;
+                extra.coord = coordb;
             }
             else {
-                fromA = true;
-                fromB = true;
-                coord = coorda;
+                extra.fromA = true;
+                extra.fromB = true;
+                extra.coord = coorda;
             }
         }
     } else {
 
         if (coorda !== inv)
         {
-
-            fromA = true;
-            fromB = false;
-            coord = coorda;
+            extra.fromA = true;
+            extra.fromB = false;
+            extra.coord = coorda;
         }
         else
         {
             if (coordb !== inv)
             {
-                fromA = false;
-                fromB = true;
-                coord = coordb;
+                extra.fromA = false;
+                extra.fromB = true;
+                extra.coord = coordb;
             }
             else
             {
-                fromA = false;
-                fromB = false;
+                extra.fromA = false;
+                extra.fromB = false;
             }
         }
     }
 };
 
-EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
+EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr, extra) {
     switch (op) {
         case 0: //Collision
         case 1: //Interseccion
-            if (!fromA || !fromB) {
-                if (fromA) {   //fromA = this.v
-                    while (ia < this.NEV && !fromB) {
-                        plv = this.readPlv(true);
+            if (!extra.fromA || !extra.fromB) {
+                if (extra.fromA) {   //fromA = this.v
+                    while (extra.ia < this.NEV && !extra.fromB) {
+                        plv = this.readPlv(true ,extra);
                         sA = sA.getSection(plv);
-                        this.nextObject(B, ia, ib);
+                        this.nextObject(B, extra);
                     }
                 } else {    //fromB = this.v
-                    while (ib < B.NEV && !fromA) {
-                        plv = B.readPlv(false);
+                    while (extra.ib < B.NEV && !extra.fromA) {
+                        plv = B.readPlv(false ,extra);
                         sB = sB.getSection(plv);
-                        this.nextObject(B, ia, ib);
+                        this.nextObject(B, extra);
                     }
                 }
             }
@@ -1003,57 +1005,57 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
             break;
         case 3: // Difference
             // Optimize preprocess for Difference
-            if (fromA)
+            if (extra.fromA)
             {
-                while (ia < this.NEV && !fromB)
+                while (extra.ia < this.NEV && !extra.fromB)
                 {
-                    plv = this.readPlv(true);
+                    plv = this.readPlv(true ,extra);
                     sA = sA.getSection(plv);
                     sCprev = sCcurr;
                     sCcurr = sA;
                     C.putPlv(plv);
-                    this.nextObject(B, ia, ib);
+                    this.nextObject(B, extra);
                 }
             }
             else
             {
-                if (fromB)
+                if (extra.fromB)
                 {
-                    while (ib < B.NEV && !fromA)
+                    while (extra.ib < B.NEV && !extra.fromA)
                     {
-                        plv = B.readPlv(false);
+                        plv = B.readPlv(false,extra);
                         sB = sB.getSection(plv);
-                        this.nextObject(B, ia, ib);
+                        this.nextObject(B, extra);
                     }
                 }
             }
             break;
         case 4: // Union
             // Optimize preprocess for Union
-            if (fromA)
+            if (extra.fromA)
             {
-                while (ia < this.NEV && !fromB)
+                while (extra.ia < this.NEV && !extra.fromB)
                 {
-                    plv = this.readPlv(true);
+                    plv = this.readPlv(true,extra);
                     sA = sA.getSection(plv);
                     sCprev = sCcurr;
                     sCcurr = sA;
                     C.putPlv(plv);
-                    this.nextObject(B, ia, ib);
+                    this.nextObject(B, extra);
                 }
             }
             else
             {
-                if (fromB)
+                if (extra.fromB)
                 {
-                    while (ib < B.NEV && !fromA)
+                    while (extra.ib < B.NEV && !extra.fromA)
                     {
-                        plv = B.readPlv(false);
+                        plv = B.readPlv(false,extra);
                         sB = sB.getSection(plv);
                         sCprev = sCcurr;
                         sCcurr = sB;
                         C.putPlv(plv);
-                        this.nextObject(B, ia, ib);
+                        this.nextObject(B, extra);
                     }
                 }
             }
@@ -1065,15 +1067,15 @@ EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr) {
 // dim es la dimension: 3 or 2
 //dim = 3: extraer un plano desde un objecto
 //dim = 2: extraer una linea desde un plano
-EVM.prototype.readPlv = function (esA) {
-    var plv = new EVM(0, 0);
+EVM.prototype.readPlv = function (esA, extra) {
+    var plv = new EVM(1, 3);
     var fixedCoord;
     var valor;
 
     if (esA) {
-        valor = ia;
+        valor = extra.ia;
     } else {
-        valor = ib;
+        valor = extra.ib;
     }
 
     plv.ABC = this.ABC;
@@ -1146,9 +1148,9 @@ EVM.prototype.readPlv = function (esA) {
     }
 
     if (esA) {
-        ia = valor;
+        extra.ia = valor;
     } else {
-        ib = valor;
+        extra.ib = valor;
     }
     return (plv);
 };
@@ -1517,8 +1519,21 @@ EVM.prototype.putPlv = function (plv) {
 // 2 = MergeXOR
 // 3 = Difference
 // 4 = Union
-var fromA, fromB;
+
+var fromA;
+var fromB;
 var coord;
+var ia;
+var ib;
+
+function objExtra() {
+    this.fromA = false;
+    this.fromB = false;
+    this.coord = 0;
+    this.ia = 0;
+    this.ib = 0;
+}
+
 EVM.prototype.operation = function (B, op)
 {
     var C = new EVM(B.ABC, this.dim);
@@ -1529,9 +1544,12 @@ EVM.prototype.operation = function (B, op)
     var plv = new EVM(B.ABC, Dimension.D2);
     var aOrd = this.ABC;
 
+    var extra = new objExtra();
+
     // A, B and C share order
-    if (this.ABC !== B.ABC)
+    if (this.ABC !== B.ABC){
         this.order(B.ABC);
+    }
 
     if (this.dim === Dimension.D1)
     {
@@ -1561,21 +1579,21 @@ EVM.prototype.operation = function (B, op)
             sCprev.dim = Dimension.D1;
             plv.dim = Dimension.D1;
         }
-        ia = 0;
-        ib = 0;
-        this.nextObject(B, ia, ib);
-        this.improve(B, op, plv, sA, sB, C, sCprev, sCcurr);
+        extra.ia = 0;
+        extra.ib = 0;
+        this.nextObject(B, extra);
+        this.improve(B, op, plv, sA, sB, C, sCprev, sCcurr, extra);
 
-        while (ia < this.NEV && ib < B.NEV)
+        while (extra.ia < this.NEV && extra.ib < B.NEV)
         {
-            if (fromA)
+            if (extra.fromA)
             {
-                plv = this.readPlv(true);
+                plv = this.readPlv(true, extra);
                 sA = sA.getSection(plv);
             }
-            if (fromB)
+            if (extra.fromB)
             {
-                plv = B.readPlv(false);
+                plv = B.readPlv(false, extra);
                 sB = sB.getSection(plv);
             }
             sCprev = sCcurr;
@@ -1592,31 +1610,31 @@ EVM.prototype.operation = function (B, op)
             }
 
             plv = sCprev.getPlv(sCcurr);
-            plv.setCoordinate(coord);
+            plv.setCoordinate(extra.coord);
             C.putPlv(plv);
 
-            this.nextObject(B, ia, ib);
+            this.nextObject(B, extra);
         }
 
         switch (op)
         {
             case 3:
-                while (ia < this.NEV)
+                while (extra.ia < this.NEV)
                 {
-                    plv = this.readPlv(true);
+                    plv = this.readPlv(true, extra);
                     C.putPlv(plv);
                 }
                 break;
             case 2:
             case 4:
-                while (ia < this.NEV)
+                while (extra.ia < this.NEV)
                 {
-                    plv = this.readPlv(true);
+                    plv = this.readPlv(true, extra);
                     C.putPlv(plv);
                 }
-                while (ib < B.NEV)
+                while (extra.ib < B.NEV)
                 {
-                    plv = B.readPlv(false);
+                    plv = B.readPlv(false, extra);
                     C.putPlv(plv);
                 }
                 break;
@@ -1685,8 +1703,9 @@ EVM.prototype.difference = function (B)
 EVM.prototype.translate = function (tx, ty, tz)
 {
     var i;
-    for (i = 0; i < this.NEV; i++)
+    for (i = 0; i < this.NEV; i++){
         this.v[i].translate(tx, ty, tz);
+    }
 };
 
 // Agrega un vector de bordes para pares de EVM que representan un borde
@@ -1734,8 +1753,8 @@ EVM.prototype.orderEdges = function (edges)
         if (edges[i].P1.X !== edges[i].P2.X)
             dira = 1;
         else
-        if (edges[i].P1.Y !== edges[i].P2.Y)
-            dira = 2;
+            if (edges[i].P1.Y !== edges[i].P2.Y)
+                dira = 2;
         else
             dira = 3;
 
@@ -1747,8 +1766,8 @@ EVM.prototype.orderEdges = function (edges)
             if (edges[j].P1.X !== edges[j].P2.X)
                 dirb = 1;
             else
-            if (edges[j].P1.Y !== edges[j].P2.Y)
-                dirb = 2;
+                if (edges[j].P1.Y !== edges[j].P2.Y)
+                    dirb = 2;
             else
                 dirb = 3;
 
