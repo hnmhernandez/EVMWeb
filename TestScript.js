@@ -595,9 +595,9 @@ function procesar(areaCritica) {
                 evmTotal = evm1.unite(evm2);
             } else if (document.getElementsByName("operation")[3].checked) {
                 //                console.log("Result Collision");
-                evmTotal = evm1.collision(evm2);
+                evmTotal = evm1.collide(evm2);
             }
-//            console.log(evmTotal);
+            console.log(JSON.stringify(evmTotal));
             var mark_end = performance.now();
             arrayTime.push((mark_end-mark_start) * 1000)
         });
@@ -605,21 +605,32 @@ function procesar(areaCritica) {
 }
 
 function prueba(){
-    var extra = new objExtra();
+    var obj1 = new EVM(1, 3);
 
-    cambiarTodo(extra.ia, 0);
+    var p1 = new Point3D(0, 0, 0);
+    var p2 = new Point3D(0, 0, 2);
+    var p3 = new Point3D(0, 1, 1);
 
-    console.log(extra);
-}
+    var v = new Array();
+    v[0] = p1;
+    v[1] = p2;
+    v[2] = p3;
 
-function cambiarTodo(objExtra, num){
-    if(objExtra === 10){
-        return;
-    }else{
-        console.log(objExtra);
-        objExtra = num; 
-        cambiarTodo(objExtra, objExtra+1);
-    }
+    obj1 = new EVMWithExVert(v,1,3);
+    //var obj2 = new copy(obj1);
+    
+//    var obj2 = jQuery.extend(true, {}, obj1);
+    var obj2 = new EVMCopy(obj1);
+//    copy(obj2, obj1);
+    
+//    obj2 = jQuery.extend(true, {}, obj1);
+    
 
+    obj2.v[0].Y = 32;
+
+    console.log(obj1);
+    console.log(obj2);
+    
+   // console.log(obj2.collide(obj1));
 }
 

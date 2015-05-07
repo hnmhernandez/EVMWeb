@@ -37,11 +37,20 @@ function EVMWithExVert(exVert, ord, d) {
     return nuevoEVM;
 }
 
-function EVMCopy(e) {
-    var nuevoEVM = new EVM(e.ABC, e.dim);
-    nuevoEVM.NEV = e.NEV;
-    nuevoEVM.v = e.v;
+function EVMCopy(e){
+    var nuevoEVM = JSON.parse(JSON.stringify(e));
+    copiarMetodos(nuevoEVM, e);
     return nuevoEVM;
+}
+
+function copiarMetodos(dest, src) {
+    var p;
+    for (p in src) {
+        if (src.hasOwnProperty(p) && !dest.hasOwnProperty(p)) {
+            dest[p] = src[p];
+        }
+    }
+    dest.__proto__ = src.__proto__;
 }
 
 function EVMFile(filename, callback) {
@@ -88,6 +97,7 @@ function EVMFile(filename, callback) {
     };
     lector.readAsText(filename[0]);
 }
+
 
 //Metodos
 EVM.prototype.putExtremeVertex = function (p) {
@@ -978,8 +988,8 @@ EVM.prototype.nextObject = function (B, extra) {
             }
         }
     }
-    
-//    console.log("fromA " + extra.fromA + " fromB " + extra.fromB + "  coord " + extra.coord);
+
+    //console.log("fromA " + extra.fromA + " fromB " + extra.fromB + "  coord " + extra.coord);
 };
 
 EVM.prototype.improve = function (B, op, plv, sA, sB, C, sCprev, sCcurr, extra) {
@@ -1154,6 +1164,7 @@ EVM.prototype.readPlv = function (esA, extra) {
     } else {
         extra.ib = valor;
     }
+
     return (plv);
 };
 
@@ -1545,7 +1556,6 @@ EVM.prototype.operation = function (B, op)
     var sCprev = new EVM(B.ABC, Dimension.D2);
     var plv = new EVM(B.ABC, Dimension.D2);
     var aOrd = this.ABC;
-
     var extra = new objExtra();
 
     // A, B and C share order
@@ -1590,28 +1600,28 @@ EVM.prototype.operation = function (B, op)
         {
             if (extra.fromA)
             {
-                plv = this.readPlv(true, extra);
-                sA = sA.getSection(plv);
+                plv = new EVMCopy(this.readPlv(true, extra));
+                sA = new EVMCopy(sA.getSection(plv));
             }
             if (extra.fromB)
             {
-                plv = B.readPlv(false, extra);
-                sB = sB.getSection(plv);
+                plv = new EVMCopy(B.readPlv(false, extra));
+                sB = new EVMCopy(sB.getSection(plv));
             }
             sCprev = sCcurr;
 
             if (op !== 2) {
-                sCcurr = sA.operation(sB, op);
+                sCcurr = new EVMCopy(sA.operation(sB, op));
             } // Recursive call
             else // mergeXor
             {
                 if (this.dim === Dimension.D3)
-                    sCcurr = sA.mergeXOR2D(sB);
+                    sCcurr = new EVMCopy(sA.mergeXOR2D(sB));
                 else
-                    sCcurr = sA.mergeXOR1D(sB);
+                    sCcurr = new EVMCopy(sA.mergeXOR1D(sB));
             }
 
-            plv = sCprev.getPlv(sCcurr);
+            plv = new EVMCopy(sCprev.getPlv(sCcurr));
             plv.setCoordinate(extra.coord);
             C.putPlv(plv);
 
@@ -1623,7 +1633,7 @@ EVM.prototype.operation = function (B, op)
             case 3:
                 while (extra.ia < this.NEV)
                 {
-                    plv = this.readPlv(true, extra);
+                    plv = new EVMCopy(this.readPlv(true, extra));
                     C.putPlv(plv);
                 }
                 break;
@@ -1631,12 +1641,12 @@ EVM.prototype.operation = function (B, op)
             case 4:
                 while (extra.ia < this.NEV)
                 {
-                    plv = this.readPlv(true, extra);
+                    plv = new EVMCopy(this.readPlv(true, extra));
                     C.putPlv(plv);
                 }
                 while (extra.ib < B.NEV)
                 {
-                    plv = B.readPlv(false, extra);
+                    plv = new EVMCopy(B.readPlv(false, extra));
                     C.putPlv(plv);
                 }
                 break;
@@ -1646,9 +1656,10 @@ EVM.prototype.operation = function (B, op)
     // Return A to its original order
     if (this.ABC !== aOrd)
         this.order(aOrd);
-    
+
     return(C);
 };
+
 
 // Deteccion de colision entre EVMs
 EVM.prototype.collide = function (B)
