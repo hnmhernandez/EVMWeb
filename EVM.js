@@ -40,28 +40,13 @@ function EVMWithExVert(exVert, ord, d) {
 function EVMCopy(e){
     var nuevoEVM = JSON.parse(JSON.stringify(e));
     copiarMetodos(nuevoEVM, e);
+    for(var i = 0 ; i < nuevoEVM.NEV; i++){
+        copiarMetodos(nuevoEVM.v[i], e.v[i]);
+    } 
     return nuevoEVM;
 }
 
-function EVMCopy2(e){
-//    var nuevoEVM = JSON.parse(JSON.stringify(e));
-//    copiarMetodos2(nuevoEVM, e);
-    var cln = e.cloneNode(true);
-    
-    return cln;
-}
-
 function copiarMetodos(dest, src) {
-    var p;
-    for (p in src) {
-        if (src.hasOwnProperty(p) && !dest.hasOwnProperty(p)) {
-            dest[p] = src[p];
-        }
-    }
-    dest.__proto__ = src.__proto__;
-}
-
-function copiarMetodos2(dest, src) {
     var p;
     for (p in src) {
         if (src.hasOwnProperty(p) && !dest.hasOwnProperty(p)) {

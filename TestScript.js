@@ -523,82 +523,37 @@ var min, max, tx, ty, tz;
 var arrayBig = new Array();
 var arrayTime = new Array();
 
-function ejecutar(){
-    /*Inicializando variables*/
-    arrayTime.length = 0;
-    min = 0;
-    max = 0;
-    var repeticion = 1;   //Cantidad de repeticiones de procesar()
-
-    /*Guardando opcion de area critica*/
-    var areaCritica = document.getElementsByName("areaCritica")[0].checked;
-
-    for(var i=0 ;i<repeticion;i++){
-        procesar(areaCritica);
-    }
-
-    setTimeout(function(){
-        console.log(arrayTime);
-        var resultadoTotal = 0;
-        for(var i=0; i<arrayTime.length ; i++){
-            resultadoTotal = resultadoTotal + arrayTime[i];
-        }
-        resultadoTotal = resultadoTotal/repeticion;
-        console.log("Total: " + resultadoTotal);
-    }, 5000);
-}
-
-function procesar(areaCritica) {
+function procesar() {
     new EVMFile(document.getElementById("fileEVM").files, function (evmResult) {
         evm1 = evmResult;
 
         new EVMFile(document.getElementById("fileEVM2").files, function (evmResult) {
             evm2 = evmResult;
-            var evmTotal = new EVM(0, 0);
-            //                        console.log("EVM 1");
-            //                        console.log(JSON.stringify(evm1));
-            //                        console.log("EVM 2");
-            //                        console.log(JSON.stringify(evm2));
 
             /*Asignar Min y Max*/
             min = evm1.minPoint();
             max = evm1.maxPoint();          
 
-            /*Mover EVM1 si areaCritica es true o false*/
-            //            if(areaCritica){
-            //                do{
-            //                    tx = Math.floor((Math.random() * (max.X+1)));
-            //                    ty = Math.floor((Math.random() * (max.Y+1)));
-            //                    tz = Math.floor((Math.random() * (max.Z+1)));
-            //                    evm3 = evm2;
-            //                    evm3.translate(tx,ty,tz);
-            //                    console.log("EVM 3");
-            //                    console.log(evm3);
-            //                    console.log(evm1.collide(evm3));
-            //                }while(!evm1.collide(evm3));
-            //            }else{
-            //                tx = max.X + 10;
-            //                ty = max.Y + 10;
-            //                tz = max.Z + 10;
-            //                evm3 = evm2;
-            //                evm3.translate(tx,ty,tz);
-            //            }
-
-            var mark_start = performance.now();
+            var evmTotal = new EVM(0, 0);
             if (document.getElementsByName("operation")[0].checked) {
+                var mark_start = performance.now();
                 evmTotal = evm1.intersection(evm2);
+                var mark_end = performance.now();
             } else if (document.getElementsByName("operation")[1].checked) {
-                //                console.log("Result Difference");
+                var mark_start = performance.now();
                 evmTotal = evm1.difference(evm2);
+                var mark_end = performance.now();
             } else if (document.getElementsByName("operation")[2].checked) {
-                //                console.log("Result Union");
+                var mark_start = performance.now();
                 evmTotal = evm1.unite(evm2);
+                var mark_end = performance.now();
             } else if (document.getElementsByName("operation")[3].checked) {
-                //                console.log("Result Collision");
+                var mark_start = performance.now();
                 evmTotal = evm1.collide(evm2);
+                var mark_end = performance.now();
             }
+
             console.log(JSON.stringify(evmTotal));
-            var mark_end = performance.now();
             arrayTime.push((mark_end-mark_start) * 1000)
         });
     });
@@ -618,9 +573,9 @@ function ejecutarBig(){
     /*Guardando opcion de area critica*/
     var areaCritica = document.getElementsByName("areaCritica")[0].checked;
 
+    document.getElementById("status").innerHTML = "Please wait...";
 
     new EVMFileBig(document.getElementById("bigFile").files, function (arrayBig) {
-        //        console.log(arrayBig);
         for(var i=0 ;i<repeticiones;i++){
             a=-1, b=-1;
             while((a+b) != max){
@@ -648,26 +603,19 @@ function ejecutarBig(){
                     j++;
                 }
             }
-            //            console.log("a " + a + " b " + b);
-
-
-
-            //            evm1 = arrayBig[a];
-            //            evm2 = arrayBig[b];
-            //
             procesarBig(areaCritica, evm1, evm2);
         }
     });
 
     setTimeout(function(){
-        //        console.log(arrayTime);
         var resultadoTotal = 0;
         for(var i=0; i<arrayTime.length ; i++){
             resultadoTotal = resultadoTotal + arrayTime[i];
         }
         resultadoTotal = resultadoTotal/repeticiones;
-        console.log("Total: " + resultadoTotal);
-    }, 60000);
+        // console.log("Total: " + resultadoTotal);
+        document.getElementById("status").innerHTML = "Result: " + resultadoTotal.toFixed(3) + " &micro;S";
+    }, 80000);
 }
 
 function randomIntFromInterval(min,max){
@@ -679,36 +627,28 @@ function randomIntFromInterval(min,max){
 }
 
 function procesarBig(areaCritica, evm1, evm2) {
-//    console.log("evm1");
-//    console.log(evm1);
-//    console.log("evm2");
-//    console.log(evm2);
-//    console.log();
-    //
-    //            /*Asignar Min y Max*/
-    //            min = evm1.minPoint();
-    //            max = evm1.maxPoint();          
-    //
-    //            /*Mover EVM1 si areaCritica es true o false*/
-    //            //            if(areaCritica){
-    //            //                do{
-    //            //                    tx = Math.floor((Math.random() * (max.X+1)));
-    //            //                    ty = Math.floor((Math.random() * (max.Y+1)));
-    //            //                    tz = Math.floor((Math.random() * (max.Z+1)));
-    //            //                    evm3 = evm2;
-    //            //                    evm3.translate(tx,ty,tz);
-    //            //                    console.log("EVM 3");
-    //            //                    console.log(evm3);
-    //            //                    console.log(evm1.collide(evm3));
-    //            //                }while(!evm1.collide(evm3));
-    //            //            }else{
-    //            //                tx = max.X + 10;
-    //            //                ty = max.Y + 10;
-    //            //                tz = max.Z + 10;
-    //            //                evm3 = evm2;
-    //            //                evm3.translate(tx,ty,tz);
-    //            //            }
-    //    
+
+    /*Asignar Min y Max*/
+    var min = evm1.minPoint();
+    var max = evm1.maxPoint(); 
+    /*Mover EVM1 si areaCritica es true o false*/
+    var tx, ty, tz;
+    if(areaCritica){
+        do{
+            tx = Math.floor((Math.random() * (max.X+1)));
+            ty = Math.floor((Math.random() * (max.Y+1)));
+            tz = Math.floor((Math.random() * (max.Z+1)));
+            evm3 = new EVMCopy(evm2);
+            evm3.translate(tx,ty,tz);
+        }while(!evm1.collide(evm3));
+    }else{
+        tx = max.X + 10;
+        ty = max.Y + 10;
+        tz = max.Z + 10;
+        evm3 = new EVMCopy(evm2);
+        evm3.translate(tx,ty,tz);
+    }
+
     var evmTotal = new EVM(0, 0);
     if (document.getElementsByName("operation")[0].checked) {
         var mark_start = performance.now();
@@ -727,28 +667,27 @@ function procesarBig(areaCritica, evm1, evm2) {
         evmTotal = evm1.collide(evm2);
         var mark_end = performance.now();
     }
-//    console.log(JSON.stringify(evmTotal));
+    //    console.log(JSON.stringify(evmTotal));
 
     arrayTime.push((mark_end-mark_start) * 1000)
-    //        });
 }
 
 function prueba(){
     var p1= new Point3D(0,0,0);
     var p2= new Point3D(0,0,2);
     var p3= new Point3D(0,1,0);
-    
+
     var arrayVert = new Array();
     arrayVert[0] = p1;
     arrayVert[1] = p2;
     arrayVert[2] = p3;
-    
+
     var obj1 = new EVMWithExVert(arrayVert, 1, 3);
-    var obj2 = new EVMCopy2(obj1);
-    
+    var obj2 = new EVMCopy(obj1);
+
     obj1.v[0].Y = 32;
-    
-    console.log(JSON.stringify(obj1));
-    console.log(JSON.stringify(obj2));
-    
+
+    console.log(obj1);
+    console.log(obj2);
+
 }
