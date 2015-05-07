@@ -522,6 +522,7 @@ var evm3 = null;
 var min, max, tx, ty, tz;
 var arrayBig = new Array();
 var arrayTime = new Array();
+var repeticiones = 1000;               //Cantidad de repeticiones de
 
 function procesar() {
     new EVMFile(document.getElementById("fileEVM").files, function (evmResult) {
@@ -559,14 +560,14 @@ function procesar() {
     });
 }
 
-function ejecutarBig(){
+function ejecutarBig(callback){
+
     /*Inicializando variables*/
     arrayTime.length = 0;
     min = 0;
     max = 0;
-    var repeticiones = 1000;               //Cantidad de repeticiones de procesarBig()
     var min = 12;                    // Numero inicial de EVs <= 12
-    var max = 6000;                    //Numero final de EVs <= 6000
+    var max = document.getElementById("MaxEvms").value;                    //Numero final de EVs <= 6000
 
     var evm1, evm2, a=0 , b=0 , evmEncontrado=false;
 
@@ -576,47 +577,53 @@ function ejecutarBig(){
     document.getElementById("status").innerHTML = "Please wait...";
 
     new EVMFileBig(document.getElementById("bigFile").files, function (arrayBig) {
-        for(var i=0 ;i<repeticiones;i++){
-            a=-1, b=-1;
-            while((a+b) != max){
-                a = randomIntFromInterval(min,max);
-                b = randomIntFromInterval(min,max);
-            }
-            evmEncontrado = false;
-            var j=0;
-            while(!evmEncontrado && j< arrayBig.length){
-                if(a == arrayBig[j].NEV){
-                    evmEncontrado = true;
-                    evm1 = arrayBig[j];
-                }else{
-                    j++;
-                }
-            }
 
-            evmEncontrado = false;
-            j = 0;
-            while(!evmEncontrado && j< arrayBig.length){
-                if(b == arrayBig[j].NEV){
-                    evmEncontrado = true;
-                    evm2 = arrayBig[j];
-                }else{
-                    j++;
+        function sacarTiempoEjecucion(miCallback){
+            for(var i=0 ;i<repeticiones;i++){
+                a=-1, b=-1;
+                while((a+b) != max){
+                    a = randomIntFromInterval(min,max);
+                    b = randomIntFromInterval(min,max);
                 }
+                evmEncontrado = false;
+                var j=0;
+                while(!evmEncontrado && j< arrayBig.length){
+                    if(a == arrayBig[j].NEV){
+                        evmEncontrado = true;
+                        evm1 = arrayBig[j];
+                    }else{
+                        j++;
+                    }
+                }
+
+                evmEncontrado = false;
+                j = 0;
+                while(!evmEncontrado && j< arrayBig.length){
+                    if(b == arrayBig[j].NEV){
+                        evmEncontrado = true;
+                        evm2 = arrayBig[j];
+                    }else{
+                        j++;
+                    }
+                }
+                procesarBig(areaCritica, evm1, evm2);
             }
-            procesarBig(areaCritica, evm1, evm2);
+            miCallback();
         }
+
+        sacarTiempoEjecucion(function(){
+
+            var resultadoTotal = 0;
+            for(var i=0; i<arrayTime.length ; i++){
+                resultadoTotal = resultadoTotal + arrayTime[i];
+            }
+            resultadoTotal = resultadoTotal/repeticiones;
+            // console.log("Total: " + resultadoTotal);
+            document.getElementById("status").innerHTML = "Result: " + resultadoTotal.toFixed(3) + " &micro;S";
+        });
     });
-
-    setTimeout(function(){
-        var resultadoTotal = 0;
-        for(var i=0; i<arrayTime.length ; i++){
-            resultadoTotal = resultadoTotal + arrayTime[i];
-        }
-        resultadoTotal = resultadoTotal/repeticiones;
-        // console.log("Total: " + resultadoTotal);
-        document.getElementById("status").innerHTML = "Result: " + resultadoTotal.toFixed(3) + " &micro;S";
-    }, 80000);
 }
+
 
 function randomIntFromInterval(min,max){
     var numRan = -1;
@@ -673,21 +680,31 @@ function procesarBig(areaCritica, evm1, evm2) {
 }
 
 function prueba(){
-    var p1= new Point3D(0,0,0);
-    var p2= new Point3D(0,0,2);
-    var p3= new Point3D(0,1,0);
+    //    var p1= new Point3D(0,0,0);
+    //    var p2= new Point3D(0,0,2);
+    //    var p3= new Point3D(0,1,0);
+    //
+    //    var arrayVert = new Array();
+    //    arrayVert[0] = p1;
+    //    arrayVert[1] = p2;
+    //    arrayVert[2] = p3;
+    //
+    //    var obj1 = new EVMWithExVert(arrayVert, 1, 3);
+    //    var obj2 = new EVMCopy(obj1);
+    //
+    //    obj1.v[0].Y = 32;
+    //
+    //    console.log(obj1);
+    //    console.log(obj2);
+    //
+    //    console.log(document.getElementById("MaxEvms").value);
+    function haceAlgo(miCallback){
+        //hago algo y llamo al callback avisando que terminé
+        miCallback();
+    }
 
-    var arrayVert = new Array();
-    arrayVert[0] = p1;
-    arrayVert[1] = p2;
-    arrayVert[2] = p3;
-
-    var obj1 = new EVMWithExVert(arrayVert, 1, 3);
-    var obj2 = new EVMCopy(obj1);
-
-    obj1.v[0].Y = 32;
-
-    console.log(obj1);
-    console.log(obj2);
+    haceAlgo(function(){
+        console.log('terminó de hacer algo');
+    });
 
 }

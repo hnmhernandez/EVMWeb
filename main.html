@@ -77,15 +77,19 @@ Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> ele
             <input type="radio" name="operation" value="Union" id="Union"><label>Union</label>
             <input type="radio" name="operation" value="Collision" id="Collision"><label>Collision</label>
         </div>
+        <br></br>
+    <input type="checkbox" name="areaCritica">Overlapping</input>
+<br></br>
+<div>
+    <input style="width: 8%;" type="number" name="numero" id="MaxEvms" min="12" max="6000"><label>Max EVMs</label>
+</div>
+<center>
+    <button id="process" onclick="procesar()">Process</button>
+    <button id="processBig" onclick="ejecutarBig()">Process BIGFILE</button>
+    <button id="test" onclick="prueba()">test</button>
+</center>
 
-        <input type="checkbox" name="areaCritica">Overlapping</input>
-    <center>
-        <button id="process" onclick="procesar()">Process</button>
-        <button id="processBig" onclick="ejecutarBig()">Process BIGFILE</button>
-        <button id="test" onclick="prueba()">test</button>
-    </center>
-    
-    <center><h4 id="status">Select file(s) or BigFile > Choose an operation > With or without overlap? > Press "Process" or "Process BIGFILE"</h4></center>
-    
-    </body>
+<center><h4 id="status">Select file(s) or BigFile > Choose an operation > With or without overlap? > Press "Process" or "Process BIGFILE"</h4></center>
+
+</body>
 </html>
