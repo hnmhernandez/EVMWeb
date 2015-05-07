@@ -43,7 +43,25 @@ function EVMCopy(e){
     return nuevoEVM;
 }
 
+function EVMCopy2(e){
+//    var nuevoEVM = JSON.parse(JSON.stringify(e));
+//    copiarMetodos2(nuevoEVM, e);
+    var cln = e.cloneNode(true);
+    
+    return cln;
+}
+
 function copiarMetodos(dest, src) {
+    var p;
+    for (p in src) {
+        if (src.hasOwnProperty(p) && !dest.hasOwnProperty(p)) {
+            dest[p] = src[p];
+        }
+    }
+    dest.__proto__ = src.__proto__;
+}
+
+function copiarMetodos2(dest, src) {
     var p;
     for (p in src) {
         if (src.hasOwnProperty(p) && !dest.hasOwnProperty(p)) {
@@ -1649,25 +1667,25 @@ EVM.prototype.operation = function (B, op)
         {
             if (extra.fromA)
             {
-                plv = new EVMCopy(this.readPlv(true, extra));
-                sA = new EVMCopy(sA.getSection(plv));
+                plv = this.readPlv(true, extra);
+                sA = sA.getSection(plv);
             }
             if (extra.fromB)
             {
-                plv = new EVMCopy(B.readPlv(false, extra));
-                sB = new EVMCopy(sB.getSection(plv));
+                plv = B.readPlv(false, extra);
+                sB = sB.getSection(plv);
             }
             sCprev = sCcurr;
 
             if (op !== 2) {
-                sCcurr = new EVMCopy(sA.operation(sB, op));
+                sCcurr = sA.operation(sB, op);
             } // Recursive call
             else // mergeXor
             {
                 if (this.dim === Dimension.D3)
-                    sCcurr = new EVMCopy(sA.mergeXOR2D(sB));
+                    sCcurr = sA.mergeXOR2D(sB);
                 else
-                    sCcurr = new EVMCopy(sA.mergeXOR1D(sB));
+                    sCcurr = sA.mergeXOR1D(sB);
             }
 
             plv = new EVMCopy(sCprev.getPlv(sCcurr));

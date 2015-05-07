@@ -520,9 +520,7 @@ var evm1 = null;
 var evm2 = null;
 var evm3 = null;
 var min, max, tx, ty, tz;
-
 var arrayBig = new Array();
-
 var arrayTime = new Array();
 
 function ejecutar(){
@@ -606,75 +604,86 @@ function procesar(areaCritica) {
     });
 }
 
-function prueba(){
-    var caso = 40;
-    var a=1;
-    var b=1;
-    
-    var indexArray = caso;
-
-    while(((a % 2 ) !== 0 && (b % 2) !== 0)  && (a+b) !== caso){
-        a = Math.floor((Math.random() * caso) + 1);
-        b = Math.floor((Math.random() * caso) + 1);
-    }
-
-    console.log("a " + a + " b " + b);
-}
-
 function ejecutarBig(){
     /*Inicializando variables*/
     arrayTime.length = 0;
     min = 0;
     max = 0;
-    var repeticiones = 10;               //Cantidad de repeticiones de procesar()
-    var maxEVMs = 40;                    //Numero final de EVs <= 6000
+    var repeticiones = 1000;               //Cantidad de repeticiones de procesarBig()
+    var min = 12;                    // Numero inicial de EVs <= 12
+    var max = 6000;                    //Numero final de EVs <= 6000
 
-    var evm1, evm2, a=0 , b=0;
+    var evm1, evm2, a=0 , b=0 , evmEncontrado=false;
 
     /*Guardando opcion de area critica*/
     var areaCritica = document.getElementsByName("areaCritica")[0].checked;
 
 
     new EVMFileBig(document.getElementById("bigFile").files, function (arrayBig) {
-        console.log(arrayBig);
+        //        console.log(arrayBig);
         for(var i=0 ;i<repeticiones;i++){
-            a=0 , b=0;
-            while((a+b) !== maxEVMs){
-                a = Math.floor((Math.random() * maxEVMs) + 1);
-                b = Math.floor((Math.random() * maxEVMs) + 1);
+            a=-1, b=-1;
+            while((a+b) != max){
+                a = randomIntFromInterval(min,max);
+                b = randomIntFromInterval(min,max);
             }
-            console.log("a " + a + " b " + b);
+            evmEncontrado = false;
+            var j=0;
+            while(!evmEncontrado && j< arrayBig.length){
+                if(a == arrayBig[j].NEV){
+                    evmEncontrado = true;
+                    evm1 = arrayBig[j];
+                }else{
+                    j++;
+                }
+            }
 
-            evm1 = arrayBig[a];
-            evm2 = arrayBig[b];
+            evmEncontrado = false;
+            j = 0;
+            while(!evmEncontrado && j< arrayBig.length){
+                if(b == arrayBig[j].NEV){
+                    evmEncontrado = true;
+                    evm2 = arrayBig[j];
+                }else{
+                    j++;
+                }
+            }
+            //            console.log("a " + a + " b " + b);
 
+
+
+            //            evm1 = arrayBig[a];
+            //            evm2 = arrayBig[b];
+            //
             procesarBig(areaCritica, evm1, evm2);
         }
     });
+
     setTimeout(function(){
-        console.log(arrayTime);
+        //        console.log(arrayTime);
         var resultadoTotal = 0;
         for(var i=0; i<arrayTime.length ; i++){
             resultadoTotal = resultadoTotal + arrayTime[i];
         }
         resultadoTotal = resultadoTotal/repeticiones;
         console.log("Total: " + resultadoTotal);
-    }, 5000);
+    }, 60000);
+}
+
+function randomIntFromInterval(min,max){
+    var numRan = -1;
+    while(numRan % 2 != 0){
+        numRan = Math.floor(Math.random()*(max-min+1)+min);
+    }
+    return numRan;
 }
 
 function procesarBig(areaCritica, evm1, evm2) {
-    console.log("evm1");
-    console.log(evm1);
-    console.log("evm2");
-    console.log(evm2);
-    console.log();
-    //        new EVMFile(document.getElementById("fileEVM2").files, function (evmResult) {
-    //            evm2 = evmResult;
-    //            var evmTotal = new EVM(0, 0);
-    //            //                        console.log("EVM 1");
-    //            //                        console.log(JSON.stringify(evm1));
-    //            //                        console.log("EVM 2");
-    //            //                        console.log(JSON.stringify(evm2));
+//    console.log("evm1");
+//    console.log(evm1);
+//    console.log("evm2");
+//    console.log(evm2);
+//    console.log();
     //
     //            /*Asignar Min y Max*/
     //            min = evm1.minPoint();
@@ -699,22 +708,47 @@ function procesarBig(areaCritica, evm1, evm2) {
     //            //                evm3 = evm2;
     //            //                evm3.translate(tx,ty,tz);
     //            //            }
-    //
-    //            var mark_start = performance.now();
-    //            if (document.getElementsByName("operation")[0].checked) {
-    //                evmTotal = evm1.intersection(evm2);
-    //            } else if (document.getElementsByName("operation")[1].checked) {
-    //                //                console.log("Result Difference");
-    //                evmTotal = evm1.difference(evm2);
-    //            } else if (document.getElementsByName("operation")[2].checked) {
-    //                //                console.log("Result Union");
-    //                evmTotal = evm1.unite(evm2);
-    //            } else if (document.getElementsByName("operation")[3].checked) {
-    //                //                console.log("Result Collision");
-    //                evmTotal = evm1.collide(evm2);
-    //            }
-    //            console.log(JSON.stringify(evmTotal));
-    //            var mark_end = performance.now();
-    //            arrayTime.push((mark_end-mark_start) * 1000)
+    //    
+    var evmTotal = new EVM(0, 0);
+    if (document.getElementsByName("operation")[0].checked) {
+        var mark_start = performance.now();
+        evmTotal = evm1.intersection(evm2);
+        var mark_end = performance.now();
+    } else if (document.getElementsByName("operation")[1].checked) {
+        var mark_start = performance.now();
+        evmTotal = evm1.difference(evm2);
+        var mark_end = performance.now();
+    } else if (document.getElementsByName("operation")[2].checked) {
+        var mark_start = performance.now();
+        evmTotal = evm1.unite(evm2);
+        var mark_end = performance.now();
+    } else if (document.getElementsByName("operation")[3].checked) {
+        var mark_start = performance.now();
+        evmTotal = evm1.collide(evm2);
+        var mark_end = performance.now();
+    }
+//    console.log(JSON.stringify(evmTotal));
+
+    arrayTime.push((mark_end-mark_start) * 1000)
     //        });
+}
+
+function prueba(){
+    var p1= new Point3D(0,0,0);
+    var p2= new Point3D(0,0,2);
+    var p3= new Point3D(0,1,0);
+    
+    var arrayVert = new Array();
+    arrayVert[0] = p1;
+    arrayVert[1] = p2;
+    arrayVert[2] = p3;
+    
+    var obj1 = new EVMWithExVert(arrayVert, 1, 3);
+    var obj2 = new EVMCopy2(obj1);
+    
+    obj1.v[0].Y = 32;
+    
+    console.log(JSON.stringify(obj1));
+    console.log(JSON.stringify(obj2));
+    
 }
