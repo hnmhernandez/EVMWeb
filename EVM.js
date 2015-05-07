@@ -98,6 +98,55 @@ function EVMFile(filename, callback) {
     lector.readAsText(filename[0]);
 }
 
+function EVMFileBig(filename, callback) {
+    var arrayEvms = new Array();
+    var lector = new FileReader();
+    var i, n, order, vertex, verticesArray, infoEVM;
+    var ord;
+    var d = Dimension.D3;
+
+    lector.onload = function (e) {
+        var contenido = e.target.result;
+        //        d = Dimension.D3;
+        contenido = contenido.split("#");
+        for(i=1; i<contenido.length ; i++){
+            infoEVM = contenido[i].split("\n");
+            n = infoEVM[0].split(" ")[1];
+            order = infoEVM[0].split(" ")[3];
+            if (order === "XYZ" || order === "xyz") {
+                ord = EVM_Order.XYZ;
+            } else if (order === "XZY" || order === "xzy") {
+                ord = EVM_Order.XZY;
+            } else if (order === "YXZ" || order === "yxz") {
+                ord = EVM_Order.YXZ;
+            } else if (order === "YZX" || order === "yzx") {
+                ord = EVM_Order.YZX;
+            } else if (order === "ZXY" || order === "ZXY") {
+                ord = EVM_Order.ZXY;
+            } else if (order === "ZYX" || order === "zyx") {
+                ord = EVM_Order.ZYX;
+            } else {
+                ord = EVM_Order.XYZ;
+            }
+
+            var exVert = new Array();
+
+            for (var j = 0; j < n; j++) {
+                verticesArray = infoEVM[j + 2].split(" ");
+                //console.log(verticesArray);
+                vertex = new Point3D(parseFloat(verticesArray[0]), parseFloat(verticesArray[1]), parseFloat(verticesArray[2]));
+                exVert.push(vertex);
+            }
+            var evmResult = new EVMWithExVert(exVert, ord, d);
+            arrayEvms.push(evmResult);
+        }
+        if (callback) {
+            callback.call(this, arrayEvms);
+        }
+    };
+    lector.readAsText(filename[0]);
+}
+
 
 //Metodos
 EVM.prototype.putExtremeVertex = function (p) {

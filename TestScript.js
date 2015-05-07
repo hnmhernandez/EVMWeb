@@ -521,6 +521,8 @@ var evm2 = null;
 var evm3 = null;
 var min, max, tx, ty, tz;
 
+var arrayBig = new Array();
+
 var arrayTime = new Array();
 
 function ejecutar(){
@@ -605,32 +607,114 @@ function procesar(areaCritica) {
 }
 
 function prueba(){
-    var obj1 = new EVM(1, 3);
-
-    var p1 = new Point3D(0, 0, 0);
-    var p2 = new Point3D(0, 0, 2);
-    var p3 = new Point3D(0, 1, 1);
-
-    var v = new Array();
-    v[0] = p1;
-    v[1] = p2;
-    v[2] = p3;
-
-    obj1 = new EVMWithExVert(v,1,3);
-    //var obj2 = new copy(obj1);
+    var caso = 40;
+    var a=1;
+    var b=1;
     
-//    var obj2 = jQuery.extend(true, {}, obj1);
-    var obj2 = new EVMCopy(obj1);
-//    copy(obj2, obj1);
-    
-//    obj2 = jQuery.extend(true, {}, obj1);
-    
+    var indexArray = caso;
 
-    obj2.v[0].Y = 32;
+    while(((a % 2 ) !== 0 && (b % 2) !== 0)  && (a+b) !== caso){
+        a = Math.floor((Math.random() * caso) + 1);
+        b = Math.floor((Math.random() * caso) + 1);
+    }
 
-    console.log(obj1);
-    console.log(obj2);
-    
-   // console.log(obj2.collide(obj1));
+    console.log("a " + a + " b " + b);
 }
 
+function ejecutarBig(){
+    /*Inicializando variables*/
+    arrayTime.length = 0;
+    min = 0;
+    max = 0;
+    var repeticiones = 10;               //Cantidad de repeticiones de procesar()
+    var maxEVMs = 40;                    //Numero final de EVs <= 6000
+
+    var evm1, evm2, a=0 , b=0;
+
+    /*Guardando opcion de area critica*/
+    var areaCritica = document.getElementsByName("areaCritica")[0].checked;
+
+
+    new EVMFileBig(document.getElementById("bigFile").files, function (arrayBig) {
+        console.log(arrayBig);
+        for(var i=0 ;i<repeticiones;i++){
+            a=0 , b=0;
+            while((a+b) !== maxEVMs){
+                a = Math.floor((Math.random() * maxEVMs) + 1);
+                b = Math.floor((Math.random() * maxEVMs) + 1);
+            }
+            console.log("a " + a + " b " + b);
+
+            evm1 = arrayBig[a];
+            evm2 = arrayBig[b];
+
+            procesarBig(areaCritica, evm1, evm2);
+        }
+    });
+    setTimeout(function(){
+        console.log(arrayTime);
+        var resultadoTotal = 0;
+        for(var i=0; i<arrayTime.length ; i++){
+            resultadoTotal = resultadoTotal + arrayTime[i];
+        }
+        resultadoTotal = resultadoTotal/repeticiones;
+        console.log("Total: " + resultadoTotal);
+    }, 5000);
+}
+
+function procesarBig(areaCritica, evm1, evm2) {
+    console.log("evm1");
+    console.log(evm1);
+    console.log("evm2");
+    console.log(evm2);
+    console.log();
+    //        new EVMFile(document.getElementById("fileEVM2").files, function (evmResult) {
+    //            evm2 = evmResult;
+    //            var evmTotal = new EVM(0, 0);
+    //            //                        console.log("EVM 1");
+    //            //                        console.log(JSON.stringify(evm1));
+    //            //                        console.log("EVM 2");
+    //            //                        console.log(JSON.stringify(evm2));
+    //
+    //            /*Asignar Min y Max*/
+    //            min = evm1.minPoint();
+    //            max = evm1.maxPoint();          
+    //
+    //            /*Mover EVM1 si areaCritica es true o false*/
+    //            //            if(areaCritica){
+    //            //                do{
+    //            //                    tx = Math.floor((Math.random() * (max.X+1)));
+    //            //                    ty = Math.floor((Math.random() * (max.Y+1)));
+    //            //                    tz = Math.floor((Math.random() * (max.Z+1)));
+    //            //                    evm3 = evm2;
+    //            //                    evm3.translate(tx,ty,tz);
+    //            //                    console.log("EVM 3");
+    //            //                    console.log(evm3);
+    //            //                    console.log(evm1.collide(evm3));
+    //            //                }while(!evm1.collide(evm3));
+    //            //            }else{
+    //            //                tx = max.X + 10;
+    //            //                ty = max.Y + 10;
+    //            //                tz = max.Z + 10;
+    //            //                evm3 = evm2;
+    //            //                evm3.translate(tx,ty,tz);
+    //            //            }
+    //
+    //            var mark_start = performance.now();
+    //            if (document.getElementsByName("operation")[0].checked) {
+    //                evmTotal = evm1.intersection(evm2);
+    //            } else if (document.getElementsByName("operation")[1].checked) {
+    //                //                console.log("Result Difference");
+    //                evmTotal = evm1.difference(evm2);
+    //            } else if (document.getElementsByName("operation")[2].checked) {
+    //                //                console.log("Result Union");
+    //                evmTotal = evm1.unite(evm2);
+    //            } else if (document.getElementsByName("operation")[3].checked) {
+    //                //                console.log("Result Collision");
+    //                evmTotal = evm1.collide(evm2);
+    //            }
+    //            console.log(JSON.stringify(evmTotal));
+    //            var mark_end = performance.now();
+    //            arrayTime.push((mark_end-mark_start) * 1000)
+    //        });
+}
