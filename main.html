@@ -85,11 +85,19 @@ Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> ele
 </div>
 <center>
     <button id="process" onclick="procesar()">Process</button>
-    <button id="processBig" onclick="ejecutarBig()">Process BIGFILE</button>
+    <button id="processBig" onclick="ejecutarBig2()">Process BIGFILE</button>
     <button id="test" onclick="prueba()">test</button>
 </center>
 
-<center><h4 id="status">Select file(s) or BigFile > Choose an operation > With or without overlap? > Press "Process" or "Process BIGFILE"</h4></center>
+<center><h4 id="status">Select file(s) or BigFile > Choose an operation > With or without overlap? > Press "Process" or "Process BIGFILE"</h4>
+    <ul id="listaResultados">
+        
+    </ul>
+</center>
+
+<audio id="sonido">
+    <source src="hey.mp3"></source>
+</audio>
 
 </body>
 </html>

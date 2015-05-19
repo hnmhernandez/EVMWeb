@@ -554,7 +554,7 @@ function procesar() {
                 var mark_end = performance.now();
             }
 
-            console.log(JSON.stringify(evmTotal));
+            document.getElementById("status").innerHTML = JSON.stringify(evmTotal);
             arrayTime.push((mark_end-mark_start) * 1000)
         });
     });
@@ -612,7 +612,7 @@ function ejecutarBig(callback){
         }
 
         sacarTiempoEjecucion(function(){
-
+            document.getElementById("sonido").play();
             var resultadoTotal = 0;
             for(var i=0; i<arrayTime.length ; i++){
                 resultadoTotal = resultadoTotal + arrayTime[i];
@@ -621,6 +621,77 @@ function ejecutarBig(callback){
             // console.log("Total: " + resultadoTotal);
             document.getElementById("status").innerHTML = "Result: " + resultadoTotal.toFixed(3) + " &micro;S";
         });
+    });
+}
+
+
+function ejecutarBig2(callback){
+
+    /*Inicializando variables*/
+    arrayTime.length = 0;
+    min = 0;
+    max = 0;
+    var min = 12;                    // Numero inicial de EVs <= 12
+    var max = document.getElementById("MaxEvms").value;                    //Numero final de EVs <= 6000
+
+    var evm1, evm2, a=0 , b=0 , evmEncontrado=false;
+    var casosRealizados = 500;
+
+    /*Guardando opcion de area critica*/
+    var areaCritica = document.getElementsByName("areaCritica")[0].checked;
+
+    document.getElementById("status").innerHTML = "Please wait...";
+
+    new EVMFileBig(document.getElementById("bigFile").files, function (arrayBig) {
+
+        while(casosRealizados <= max){
+            arrayTime.length = 0;
+            function sacarTiempoEjecucion(miCallback){
+                for(var i=0 ;i<repeticiones;i++){
+                    a=-1, b=-1;
+                    while((a+b) != casosRealizados){
+                        a = randomIntFromInterval(min,casosRealizados);
+                        b = randomIntFromInterval(min,casosRealizados);
+                    }
+                    evmEncontrado = false;
+                    var j=0;
+                    while(!evmEncontrado && j< arrayBig.length){
+                        if(a == arrayBig[j].NEV){
+                            evmEncontrado = true;
+                            evm1 = arrayBig[j];
+                        }else{
+                            j++;
+                        }
+                    }
+
+                    evmEncontrado = false;
+                    j = 0;
+                    while(!evmEncontrado && j< arrayBig.length){
+                        if(b == arrayBig[j].NEV){
+                            evmEncontrado = true;
+                            evm2 = arrayBig[j];
+                        }else{
+                            j++;
+                        }
+                    }
+                    procesarBig(areaCritica, evm1, evm2);
+                }
+                miCallback();
+            }
+
+            sacarTiempoEjecucion(function(){
+                document.getElementById("status").innerHTML = "";
+                var resultadoTotal = 0;
+                for(var i=0; i<arrayTime.length ; i++){
+                    resultadoTotal = resultadoTotal + arrayTime[i];
+                }
+                resultadoTotal = resultadoTotal/repeticiones;
+                // console.log("Total: " + resultadoTotal);
+                //                document.getElementById("listaResultados").innerHTML += "<li>"+casosRealizados+" EVMs: " + resultadoTotal.toFixed(3) + " &micro;S</li>";
+                document.getElementById("listaResultados").innerHTML += "<li>"+ resultadoTotal.toFixed(3) + "</li>";
+            });
+            casosRealizados = casosRealizados + 500;
+        }
     });
 }
 
@@ -634,7 +705,6 @@ function randomIntFromInterval(min,max){
 }
 
 function procesarBig(areaCritica, evm1, evm2) {
-
     /*Asignar Min y Max*/
     var min = evm1.minPoint();
     var max = evm1.maxPoint(); 
@@ -659,19 +729,19 @@ function procesarBig(areaCritica, evm1, evm2) {
     var evmTotal = new EVM(0, 0);
     if (document.getElementsByName("operation")[0].checked) {
         var mark_start = performance.now();
-        evmTotal = evm1.intersection(evm2);
+        evmTotal = evm1.intersection(evm3);
         var mark_end = performance.now();
     } else if (document.getElementsByName("operation")[1].checked) {
         var mark_start = performance.now();
-        evmTotal = evm1.difference(evm2);
+        evmTotal = evm1.difference(evm3);
         var mark_end = performance.now();
     } else if (document.getElementsByName("operation")[2].checked) {
         var mark_start = performance.now();
-        evmTotal = evm1.unite(evm2);
+        evmTotal = evm1.unite(evm3);
         var mark_end = performance.now();
     } else if (document.getElementsByName("operation")[3].checked) {
         var mark_start = performance.now();
-        evmTotal = evm1.collide(evm2);
+        evmTotal = evm1.collide(evm3);
         var mark_end = performance.now();
     }
     //    console.log(JSON.stringify(evmTotal));
@@ -680,9 +750,17 @@ function procesarBig(areaCritica, evm1, evm2) {
 }
 
 function prueba(){
-    //    var p1= new Point3D(0,0,0);
-    //    var p2= new Point3D(0,0,2);
-    //    var p3= new Point3D(0,1,0);
+//        var p1= new Point3D(0,0,0);
+//        var p2= new Point3D(0,0,2);
+//        var p3= new Point3D(0,1,0);
+//    
+//        p3 = new Point3DCopy(p2);
+//        
+//        p3.X = 50;
+//        p2.Y = 40;
+//    
+//        console.log(p2);
+//        console.log(p3);
     //
     //    var arrayVert = new Array();
     //    arrayVert[0] = p1;
@@ -698,13 +776,13 @@ function prueba(){
     //    console.log(obj2);
     //
     //    console.log(document.getElementById("MaxEvms").value);
-    function haceAlgo(miCallback){
-        //hago algo y llamo al callback avisando que terminé
-        miCallback();
-    }
-
-    haceAlgo(function(){
-        console.log('terminó de hacer algo');
-    });
+//    function haceAlgo(miCallback){
+//        //hago algo y llamo al callback avisando que terminé
+//        miCallback();
+    
+//    document.getElementById("sonido").play();
+    
+    
+    
 
 }

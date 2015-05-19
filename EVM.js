@@ -46,6 +46,16 @@ function EVMCopy(e){
     return nuevoEVM;
 }
 
+function cloneObject(source_) {
+  for (var item in source_) {
+    if (typeof source_[item] == 'object') {
+      this[item] = new cloneObject(source_[item]);
+    } else{
+      this[item] = source_[item];
+    }
+  }
+}
+
 function copiarMetodos(dest, src) {
     var p;
     for (p in src) {
@@ -153,7 +163,8 @@ function EVMFileBig(filename, callback) {
 
 //Metodos
 EVM.prototype.putExtremeVertex = function (p) {
-    this.v.push(p);
+    var nuevoPunto = new Point3DCopy(p);
+    this.v.push(nuevoPunto);
     this.NEV++;
 };
 
@@ -1244,8 +1255,7 @@ EVM.prototype.getSection = function (plv_i) {
     return (S_i);
 };
 
-EVM.prototype.mergeXOR1D = function (B)
-{
+EVM.prototype.mergeXOR1D = function (B){
     var C = new EVM(B.ABC, this.dim);
     var ia = 0, ib = 0, aob;
     var aOrd = this.ABC;

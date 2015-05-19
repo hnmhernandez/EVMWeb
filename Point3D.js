@@ -11,11 +11,28 @@ function Point3D(x, y, z) {
     this.Y = y;
     this.Z = z;
 }
+//
+//function Point3Dcopy(p) {
+//    var punto = new Point3D(p.X, p.Y, p.Z);
+//    return punto;
+//}
 
-function Point3Dcopy(p) {
-    var punto = new Point3D(p.X, p.Y, p.Z);
-    return punto;
+function Point3DCopy(e){
+    var nuevoPunto = JSON.parse(JSON.stringify(e));
+    copiarMetodos(nuevoPunto, e);
+    return nuevoPunto;
 }
+
+function copiarMetodos(dest, src) {
+    var p;
+    for (p in src) {
+        if (src.hasOwnProperty(p) && !dest.hasOwnProperty(p)) {
+            dest[p] = src[p];
+        }
+    }
+    dest.__proto__ = src.__proto__;
+}
+
 //Metodos
 Point3D.prototype.esIgual = function(v){
     if(this.X === v.X && this.Y === v.Y && this.Z === v.Z){
