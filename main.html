@@ -7,97 +7,196 @@ HTML Principal donde se realizara el renderizado del objecto EVM.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Extreme Vertices Model</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!------------JS glMatrix funciones de matrices en Javascript---------->
-        <script src="glMatrix.min.js"></script>
+------------JS glMatrix funciones de matrices en Javascript----------
+<script src="glMatrix.min.js"></script>
 
-        <!--Shader para el grado de precision y color de todos los pixeles----->
-        <script id="shader-fs" type="x-shader/x-fragment">    
-            #ifdef GL_ES
-            precision highp float;
-            #endif
+--Shader para el grado de precision y color de todos los pixeles-----
+<script id="shader-fs" type="x-shader/x-fragment">    
+#ifdef GL_ES
+precision highp float;
+#endif
 
-            void main(void) {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-            }
-        </script>
+void main(void) {
+gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+}
+</script>
 
-        <!--Shader que posiciona cada vertice en el lienzo mediante las matrices----->
-        <script id="shader-vs" type="x-shader/x-vertex">
-            attribute vec3 aVertexPosition;
+--Shader que posiciona cada vertice en el lienzo mediante las matrices-----
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec3 aVertexPosition;
 
-            uniform mat4 uMVMatrix;
-            uniform mat4 uPMatrix;
+uniform mat4 uMVMatrix;
+uniform mat4 uPMatrix;
 
-            void main(void) {
-            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-            }
-        </script>
+void main(void) {
+gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+}
+</script>
+-->
+
+        <!--Bootstrap CSS-->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/jumbotron-narrow.css" rel="stylesheet">
+
 
         <!--------Libreria que implementa todas las funciones del EVM---------->
-        <script src="Point3D.js"></script>
-        <script src="Vector3D.js"></script>
-        <script src="Line3D.js"></script>
-        <script src="Plane.js"></script>
-        <script src="Object.js"></script>
-        <script src="EVM.js"></script>  
-        <script src="TestScript.js"></script>  
+        <script src="LibraryEVMWeb/Point3D.js"></script>
+        <script src="LibraryEVMWeb/Vector3D.js"></script>
+        <script src="LibraryEVMWeb/Line3D.js"></script>
+        <script src="LibraryEVMWeb/Plane.js"></script>
+        <script src="LibraryEVMWeb/Object.js"></script>
+        <script src="LibraryEVMWeb/EVM.js"></script>
+
+        <!--Bootstrap JS-->
+        <!--
+<script src="js/jquery-1.11.3.js"></script>
+<script src="js/bootstrap.min.js"></script>
+-->
+
+
+        <!--Script principal-->
+        <script src="LibraryEVMWeb/TestScript.js"></script>  
 
     </head>
     <!--<body onload="webGLStart()">-->
     <body>
-        <!--<canvas id="leccion1-canvas" width="640" height="480">
+        <div class="container">
+            <div class="header clearfix">
+                <nav>
+                    <ul class="nav nav-pills pull-right">
+                        <li role="presentation"><a href="#">By Harold Montenegro</a></li>
+                    </ul>
+                </nav>
+                <h3 class="text-muted">EVM Web Test</h3>
+            </div>
+
+            <div class="jumbotron">
+                <center><h1>Extreme Vertices Model in <i>JavaScript</i></h1></center>
+            </div>
+
+            <div class="row marketing">
+                <div class="col-sm-6">
+                    <h3>1)Select single test or big test:</h3>
+                    <div id="EVM1">
+                        <h4>EVM 1 File:</h4>
+                        <input type="file" id="fileEVM" multiple="false" name="fileEVM[]"/>
+                    </div>
+
+                    <div id="EVM2">
+                        <h4>EVM 2 File:</h4>
+                        <input type="file" id="fileEVM2" multiple="false" name="fileEVM[]"/>
+                    </div>
+                    
+                    <br><br>
+
+                    <div id="BIGEVM">
+                        <h4>BIG EVM File:</h4>
+                        <input type="file" id="bigFile" multiple="true" name="fileEVM[]"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <h3>2)Select max EVMs:</h3>
+                    <div>
+                        <input style="width: 30%;" type="number" name="numero" id="MaxEvms" min="12" max="6000">
+                    </div>
+
+                    <h3>3)Choose an operation:</h3>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="operation" id="Intersection" value="Intersection" checked>
+                            Intersection
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="operation" id="Difference" value="Difference" >
+                            Difference
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="operation" id="Union" value="Union" >
+                            Union
+                        </label>
+                    </div>
+
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="operation" id="Collision" value="Collision" >
+                            Collision
+                        </label>
+                    </div>
+
+                    <h3>4)With or without overlap?</h3>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="areaCritica">
+                            Overlapping
+                        </label>
+                    </div>
+
+                    <!--
+<div>
+<label>Choose an operation:</label>
+<input type="radio" name="operation" value="Intersection" id="Intersection"><label>Intersection</label>
+<input type="radio" name="operation" value="Difference" id="Difference"><label>Difference</label>
+<input type="radio" name="operation" value="Union" id="Union"><label>Union</label>
+<input type="radio" name="operation" value="Collision" id="Collision"><label>Collision</label>
+</div>
+-->
+                    <!--
+<br></br>
+<input type="checkbox" name="areaCritica">Overlapping</input>
+<br></br>
+-->
+                </div>
+            </div>
+            <!--<canvas id="leccion1-canvas" width="640" height="480">
 Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
 </canvas>-->
-        <h2>Object File:</h2>
-        <input type="file" id="file" name="file" onchange="ObjectFile(this.files, false)"/>
+            <!--
+<h2>Object File:</h2>
+<input type="file" id="file" name="file" onchange="ObjectFile(this.files, false)"/>
+-->
 
-        <div id="EVM1">
-            <h2>EVM 1 File:</h2>
-            <input type="file" id="fileEVM" multiple="false" name="fileEVM[]"/>
-        </div>
+            <div class="row marketing">
+                <div class="col-sm-3">
+                    <p><a class="btn btn-lg btn-success" id="process" onclick="procesar()" role="button">Process</a></p>
+                </div>
+                <div class="col-sm-3">
+                    <p><a class="btn btn-lg btn-danger" id="processBig" onclick="ejecutarBig2()" role="button">Process BIG</a></p>
+                </div>
 
-        <div id="EVM2">
-            <h2>EVM 2 File:</h2>
-            <input type="file" id="fileEVM2" multiple="false" name="fileEVM[]"/>
-        </div>
+                <div class="col-sm-6">
+                    <center><h3 id="status"></h3>
+                        <ul id="listaResultados">
 
-        <div id="BIGEVM">
-            <h2>BIG EVM File:</h2>
-            <input type="file" id="bigFile" multiple="true" name="fileEVM[]"/>
-        </div>
-
-        <div>
-            <label>Choose an operation:</label>
-            <input type="radio" name="operation" value="Intersection" id="Intersection"><label>Intersection</label>
-            <input type="radio" name="operation" value="Difference" id="Difference"><label>Difference</label>
-            <input type="radio" name="operation" value="Union" id="Union"><label>Union</label>
-            <input type="radio" name="operation" value="Collision" id="Collision"><label>Collision</label>
-        </div>
-        <br></br>
-    <input type="checkbox" name="areaCritica">Overlapping</input>
-<br></br>
-<div>
-    <input style="width: 8%;" type="number" name="numero" id="MaxEvms" min="12" max="6000"><label>Max EVMs</label>
-</div>
+                        </ul>
+                    </center>
+                </div>
+            </div>
+            <!--
 <center>
-    <button id="process" onclick="procesar()">Process</button>
-    <button id="processBig" onclick="ejecutarBig2()">Process BIGFILE</button>
-    <button id="test" onclick="prueba()">test</button>
+<button id="process" onclick="procesar()">Process</button>
+<button id="processBig" onclick="ejecutarBig2()">Process BIGFILE</button>
+<button id="test" onclick="prueba()">test</button>
 </center>
 
-<center><h4 id="status">Select file(s) or BigFile > Choose an operation > With or without overlap? > Press "Process" or "Process BIGFILE"</h4>
-    <ul id="listaResultados">
-        
-    </ul>
+<center><h4 id="status"></h4>
+<ul id="listaResultados">
+
+</ul>
 </center>
+-->
 
-<audio id="sonido">
-    <source src="hey.mp3"></source>
-</audio>
-
-</body>
+            <footer class="footer">
+                <p>Copyright &copy; 2015. Harold Montenegro. All rights reserved.</p>
+            </footer>
+        </div>
+    </body>
 </html>
